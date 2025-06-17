@@ -1,30 +1,22 @@
-from fastapi import FastAPI, HTTPException, Depends, status, Request, Response, Form, UploadFile, File, Query
+from fastapi import FastAPI, HTTPException, Depends, status, Request, Response, Form, UploadFile, File
 from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
-from fastapi.responses import HTMLResponse, RedirectResponse, FileResponse, JSONResponse
+from fastapi.responses import RedirectResponse, FileResponse, JSONResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 from datetime import datetime, timedelta
 from typing import Optional, List
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel
-import models
 import database
-from sqlalchemy import select, text, delete
+from sqlalchemy import select, text
 import os
-import uuid
-import bcrypt
 import aiohttp
 import json
-import asyncio
 from openai import OpenAI
 import PyPDF2
-import io
 import tempfile
-import shutil
-from pathlib import Path
-import aiofiles
 
 photo_AI = ""
 deepseek_AI = ""
@@ -1121,4 +1113,4 @@ async def ai_search_articles(
 
 if __name__ == "__main__":
     import uvicorn
-    uvicorn.run(app, host="127.0.0.2", port=8000) 
+    uvicorn.run(app, host="0.0.0.0", port=8001) 

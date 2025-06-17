@@ -1,10 +1,9 @@
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession
 from sqlalchemy.orm import sessionmaker
-from sqlalchemy.ext.declarative import declarative_base
 import models
-from sqlalchemy import select, or_, text
-from models import Base, User, Article
-from typing import List, Optional
+from sqlalchemy import select, text
+from models import Article
+from typing import Optional
 import json
 
 # Create async engine
