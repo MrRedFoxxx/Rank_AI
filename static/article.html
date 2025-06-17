@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Рыболовство: экономика и польза рыбы | Rank AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+            border-radius: 40px;
+            margin-top: 10px;
+        }
+
+        .article-hero {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1551288049-bebda4e38f71?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+            height: 400px;
+        }
+
+        .content-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .article-image {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .citation {
+            border-left: 4px solid #3a7bd5;
+            padding-left: 16px;
+            font-style: italic;
+            color: #555;
+        }
+
+        .reference-item {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .rating-badge {
+            background: linear-gradient(135deg, #8cff00 0%, #4caf50 100%);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(69, 151, 236, 0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header/Navigation -->
+        <header class="gradient-bg shadow-lg py-4">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <h1 class="text-2xl md:text-3xl font-bold text-white">Rank</h1>
+                        <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                            <span class="text-xl md:text-2xl font-light text-gray-800">AI</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                        <div class="relative flex items-center bg-white bg-opacity-40 rounded-full px-4 py-2">
+                            <input 
+                                type="text" 
+                                placeholder="Поиск научных статей..." 
+                                class="search-input w-full bg-transparent border-none text-white placeholder-white focus:ring-0 pl-2"
+                            >
+                            <button class="text-white ml-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Auth Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <button id="login-btn" class="bg-white text-gray-800 font-medium px-6 py-2 rounded-full hover:bg-gray-100 transition">
+                            Войти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Article Hero Section -->
+        <section class="article-hero flex items-end text-white">
+            <div class="container mx-auto px-4 py-12">
+                <div class="max-w-3xl">
+                    <div class="rating-badge text-white font-bold px-3 py-1 rounded-full text-sm inline-flex items-center mb-4">
+                        <i class="fas fa-star mr-1"></i> 9.9
+                    </div>
+                    <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">Рыболовство: экономика и польза рыбы</h1>
+                    <div class="flex flex-wrap gap-4">
+                        <div class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Иванов И.И., Петров П.П.</div>
+                        <div class="bg-white bg-opacity-20 px-3 py-1 rounded-full text-sm">Журнал экономики и экологии, 2023</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Article Content -->
+        <main class="container mx-auto px-4 py-12">
+            <div class="content-container">
+                <!-- Article Meta -->
+                <div class="flex flex-wrap gap-4 mb-8">
+                    <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Экономика</div>
+                    <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Экология</div>
+                    <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">Пищевая промышленность</div>
+                </div>
+
+                <!-- Abstract -->
+                <div class="bg-gray-50 p-6 rounded-xl mb-8">
+                    <h2 class="text-xl font-semibold mb-4">Аннотация</h2>
+                    <p class="text-gray-700">
+                        В данной статье рассматриваются экономические аспекты рыболовства в современном мире, а также анализируется пищевая ценность различных видов рыбы. Исследование охватывает период с 2010 по 2022 год и включает данные из 15 стран. Основные выводы указывают на необходимость устойчивого управления рыбными ресурсами для обеспечения продовольственной безопасности.
+                    </p>
+                    <div class="mt-4">
+                        <h3 class="text-sm font-semibold mb-2">Ключевые слова:</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">рыболовство</span>
+                            <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">экономика</span>
+                            <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">питание</span>
+                            <span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">устойчивое развитие</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Content -->
+                <article class="prose max-w-none mb-12">
+                    <h2>Введение</h2>
+                    <p>
+                        Рыболовство играет ключевую роль в мировой экономике и пищевой промышленности. По данным Продовольственной и сельскохозяйственной организации ООН (ФАО), рыболовство и аквакультура обеспечивают средства к существованию для более чем 10% мирового населения. В последние десятилетия наблюдается устойчивый рост спроса на рыбную продукцию, что связано с увеличением населения и осознанием пользы рыбы для здоровья.
+                    </p>
+
+                    <img src="https://images.unsplash.com/photo-1518544866330-95a2bec01e13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Рыболовство" class="article-image my-8">
+
+                    <h2>Экономическое значение рыболовства</h2>
+                    <p>
+                        Глобальный объем производства рыбы и морепродуктов в 2022 году составил около 179 миллионов тонн, из которых 52% приходится на аквакультуру. Общая стоимость продукции оценивается в 401 миллиард долларов США. Основными производителями являются Китай, Индонезия, Индия, Вьетнам и Перу.
+                    </p>
+
+                    <div class="citation my-6">
+                        "Рыболовный сектор обеспечивает занятость для более чем 59 миллионов человек по всему миру, причем 85% из них работают в маломасштабном рыболовстве." (FAO, 2022)
+                    </div>
+
+                    <p>
+                        В России рыболовство является важной отраслью экономики, особенно для прибрежных регионов. Общий объем вылова водных биоресурсов в 2022 году составил 5,2 миллиона тонн, что на 7% больше, чем в предыдущем году. Основными промысловыми видами являются минтай, сельдь, треска и камбала.
+                    </p>
+
+                    <h2>Пищевая ценность рыбы</h2>
+                    <p>
+                        Рыба является важным источником высококачественного белка, жирных кислот омега-3, витаминов (D, B2) и минералов (кальций, фосфор, железо, цинк, йод, магний и калий). Регулярное потребление рыбы (2-3 порции в неделю) связано с:
+                    </p>
+                    <ul>
+                        <li>Снижением риска сердечно-сосудистых заболеваний на 15-20%</li>
+                        <li>Улучшением когнитивных функций</li>
+                        <li>Снижением риска возрастной макулярной дегенерации</li>
+                        <li>Уменьшением воспалительных процессов в организме</li>
+                    </ul>
+
+                    <img src="https://images.unsplash.com/photo-1560279966-8ffa9b9b8ac5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Пищевая ценность рыбы" class="article-image my-8">
+
+                    <h2>Проблемы устойчивого рыболовства</h2>
+                    <p>
+                        Несмотря на экономическую и пищевую ценность, рыболовство сталкивается с рядом серьезных проблем:
+                    </p>
+                    <ol>
+                        <li><strong>Перелов:</strong> 34,2% мировых рыбных запасов эксплуатируются на биологически неустойчивом уровне</li>
+                        <li><strong>Изменение климата:</strong> Повышение температуры воды влияет на миграционные пути и нерестилища</li>
+                        <li><strong>Загрязнение океанов:</strong> Микропластик и другие загрязнители накапливаются в рыбе</li>
+                        <li><strong>Нерегулируемый промысел:</strong> Незаконный, несообщаемый и нерегулируемый (ННН) промысел составляет до 26 миллионов тонн в год</li>
+                    </ol>
+
+                    <h2>Заключение</h2>
+                    <p>
+                        Рыболовство остается важнейшим сектором мировой экономики и источником ценных пищевых продуктов. Однако для обеспечения долгосрочной устойчивости необходимы:
+                    </p>
+                    <ul>
+                        <li>Совершенствование методов управления рыбными запасами</li>
+                        <li>Развитие устойчивой аквакультуры</li>
+                        <li>Борьба с ННН-промыслом</li>
+                        <li>Повышение осведомленности потребителей</li>
+                    </ul>
+                    <p>
+                        Реализация этих мер позволит сохранить рыбные ресурсы для будущих поколений и обеспечить продовольственную безопасность.
+                    </p>
+                </article>
+
+                <!-- References -->
+                <div class="mb-12">
+                    <h2 class="text-2xl font-bold mb-6">Список литературы</h2>
+                    <div class="space-y-2">
+                        <div class="reference-item">
+                            1. FAO. (2022). The State of World Fisheries and Aquaculture 2022. Rome.
+                        </div>
+                        <div class="reference-item">
+                            2. Иванов И.И., Петров П.П. (2021). Экономика морских биоресурсов. Москва: Издательство "Экономика".
+                        </div>
+                        <div class="reference-item">
+                            3. Smith, A.B., Jones, C.D. (2020). Sustainable Fisheries Management: Global Perspectives. Marine Policy, 45(3), 112-125.
+                        </div>
+                        <div class="reference-item">
+                            4. Всемирный банк. (2021). The Sunken Billions Revisited: Progress and Challenges in Global Marine Fisheries.
+                        </div>
+                        <div class="reference-item">
+                            5. Росрыболовство. (2023). Отчет о состоянии рыболовства в Российской Федерации за 2022 год.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Article Actions -->
+                <div class="flex flex-wrap justify-between gap-4 mb-12">
+                    <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition flex items-center">
+                        <i class="fas fa-download mr-2"></i> Скачать PDF
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition flex items-center">
+                        <i class="fas fa-bookmark mr-2"></i> Добавить в закладки
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition flex items-center">
+                        <i class="fas fa-share-alt mr-2"></i> Поделиться
+                    </button>
+                    <button class="bg-gray-200 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-300 transition flex items-center">
+                        <i class="fas fa-quote-right mr-2"></i> Цитировать
+                    </button>
+                </div>
+
+                <!-- Similar Articles -->
+                <div>
+                    <h2 class="text-2xl font-bold mb-6">Похожие статьи</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Article 1 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1518544866330-95a2bec01e13?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Экономика морских ресурсов" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-lg">Экономика морских ресурсов</h3>
+                                    <div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">8.7</div>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">Смирнов А.А.</p>
+                                <p class="text-sm text-gray-500">Журнал морской экономики, 2021</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Article 2 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1560279966-8ffa9b9b8ac5?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Питательная ценность морепродуктов" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-lg">Питательная ценность морепродуктов</h3>
+                                    <div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">8.9</div>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">Кузнецова Е.В.</p>
+                                <p class="text-sm text-gray-500">Журнал питания, 2022</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Article 3 -->
+                        <div class="bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition cursor-pointer">
+                            <img src="https://images.unsplash.com/photo-1517639841479-2f4d4a3adad2?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80" alt="Устойчивое рыболовство в XXI веке" class="w-full h-48 object-cover">
+                            <div class="p-4">
+                                <div class="flex justify-between items-start mb-2">
+                                    <h3 class="font-semibold text-lg">Устойчивое рыболовство в XXI веке</h3>
+                                    <div class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-bold">9.1</div>
+                                </div>
+                                <p class="text-sm text-gray-600 mb-2">Петрова О.И.</p>
+                                <p class="text-sm text-gray-500">Экология и устойчивое развитие, 2023</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#f5f5f0] text-gray-800 py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between gap-8">
+                    <!-- Brand section -->
+                    <div class="max-w-xs">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-900">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-[#2563eb] rounded-md">
+                                <span class="text-xl font-light text-white">AI</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">
+                            Система ранжирования научных статей с использованием искусственного интеллекта для исследователей и академиков.
+                        </p>
+                        <div class="mt-6 flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Навигация</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Главная</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Статьи</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Рейтинги</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>О проекте</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ресурсы</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Блог</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Документация</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>API</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Поддержка</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">contact@rankai.ru</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-phone mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">+7 (XXX) XXX-XX-XX</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">Москва, Россия</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 mb-4 md:mb-0 text-sm">
+                        © 2023 Rank AI. Все права защищены.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Политика конфиденциальности</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Условия использования</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Cookie</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.querySelector('.fa-search').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-input').value;
+            if(searchTerm.trim() !== '') {
+                alert(`Вы ищете: ${searchTerm}`);
+                // In a real app, you would make an API call here
+            }
+        });
+
+        // Allow search on Enter key press
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                const searchTerm = document.querySelector('.search-input').value;
+                if(searchTerm.trim() !== '') {
+                    alert(`Вы ищете: ${searchTerm}`);
+                    // In a real app, you would make an API call here
+                }
+            }
+        });
+
+        // Login popup functionality
+        const loginPopup = document.getElementById('login-popup');
+        const loginBtn = document.getElementById('login-btn');
+        
+        loginBtn.addEventListener('click', function() {
+            // In a real app, this would open the login popup
+            alert('Функция входа будет реализована в будущем');
+        });
+
+        // Article actions
+        document.querySelectorAll('.bg-blue-600, .bg-gray-200').forEach(button => {
+            button.addEventListener('click', function() {
+                const action = this.querySelector('i').className.split(' ')[1];
+                let message = '';
+                
+                switch(action) {
+                    case 'fa-download':
+                        message = 'Начинается загрузка PDF-версии статьи';
+                        break;
+                    case 'fa-bookmark':
+                        message = 'Статья добавлена в закладки';
+                        break;
+                    case 'fa-share-alt':
+                        message = 'Поделиться статьей';
+                        break;
+                    case 'fa-quote-right':
+                        message = 'Скопирована цитата для ссылки';
+                        break;
+                }
+                
+                alert(message);
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1392 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank AI - Система ранжирования научных статей</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
+            background-color: white;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+            border-radius: 0;
+            margin-top: 0;
+        }
+
+        .article-card-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('/static/assets/system.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+        #user-profile-btn {
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+        }
+
+        #user-profile-btn:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        #user-initials {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+        }
+
+        .feature-card-bg {
+            background: linear-gradient(rgba(69, 151, 236, 0.9), rgba(58, 123, 213, 0.9));
+        }
+        .top-article-1 {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/assets/article_1.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .top-article-2 {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/assets/article_2.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .top-article-3 {
+            background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.7)), url('/static/assets/article_3.png');
+            background-size: cover;
+            background-position: center;
+        }
+        .rating-badge {
+            background: linear-gradient(135deg, #8cff00 0%, #4caf50 100%);
+        }
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(69, 151, 236, 0.3);
+        }
+        .blur-bg {
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        .hover-scale:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+        .square-article {
+            aspect-ratio: 1/1;
+        }
+        .feature-cards-container {
+            height: 100%;
+        }
+        
+        /* Popup styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .popup-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+        
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            cursor: pointer;
+            color: #666;
+            background: none;
+            border: none;
+        }
+        
+        .login-popup {
+            max-width: 500px;
+        }
+        
+        .register-popup {
+            max-width: 500px;
+        }
+        
+        .terms-popup {
+            max-width: 700px;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+        
+        /* Similar articles styles */
+        .similar-article-card {
+            transition: all 0.3s ease;
+            border-radius: 12px;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .similar-article-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .similar-article-image {
+            height: 180px;
+            width: 100%;
+            object-fit: cover;
+        }
+        
+        .similar-article-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            padding: 20px;
+            color: white;
+        }
+        
+        .similar-article-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.9);
+            color: #4caf50;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+        
+        @media (min-width: 1024px) {
+            .hero-container {
+                height: 384px; /* 96px * 4 (высота 3 карточек по 128px + отступы) */
+            }
+        }
+
+        .toggle-circle {
+            transition: all 0.3s ease;
+            margin-left: 0;
+            min-width: 1.25rem;
+        }
+
+        #ai-search-toggle:checked ~ div > div {
+            left: calc(100% - 22px) !important;
+        }
+
+        #ai-search-toggle:checked ~ div > div i {
+            color: white !important;
+        }
+        
+        /* Line clamp utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header/Navigation -->
+        <header class="gradient-bg shadow-lg">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <h1 class="text-2xl md:text-3xl font-bold text-white">Rank</h1>
+                        <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                            <span class="text-xl md:text-2xl font-light text-gray-800">AI</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                        <form id="search-form" action="/static/search.html" method="GET" class="relative flex items-center bg-white bg-opacity-40 rounded-full px-4 py-2">
+                            <input 
+                                type="text" 
+                                name="q"
+                                id="search-input"
+                                placeholder="Поиск научных статей..." 
+                                class="search-input w-full bg-transparent border-none text-white placeholder-white focus:ring-0 pl-2"
+                                required
+                            >
+                            <div class="flex items-center ml-2">
+                                <label class="relative inline-flex items-center cursor-pointer group">
+                                    <input type="checkbox" id="ai-search-toggle" class="sr-only peer">
+                                    <div class="w-14 h-7 bg-gray-200 rounded-full p-1 transition-colors duration-300 peer-checked:bg-blue-600 relative flex items-center">
+                                        <div class="absolute w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transition-all duration-300" style="left: 2px; top: 50%; transform: translateY(-50%);">
+                                            <i class="fas fa-robot text-xs text-blue-600"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="text-white ml-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Auth Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Кнопка входа (показывается когда пользователь не авторизован) -->
+                        <button id="login-btn" class="bg-white text-gray-800 font-medium px-6 py-2 rounded-full hover:bg-gray-100 transition hidden">
+                            Войти
+                        </button>
+                        
+                        <!-- Блок пользователя (показывается после авторизации) -->
+                        <div id="user-profile" class="relative group hidden">
+                            <button class="flex items-center space-x-3 bg-white bg-opacity-10 rounded-lg px-4 py-2 hover:bg-opacity-20 transition-all duration-200">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <span class="block text-white font-medium text-sm" id="userFullName">Загрузка...</span>
+                                    <span class="block text-white text-opacity-70 text-xs">Профиль</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-white text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                <a href="/my_profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user-circle mr-2"></i>Профиль
+                                </a>
+                                <a href="/my_profile.html#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-cog mr-2"></i>Настройки
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Выйти
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Hero Section -->
+            <section class="mb-12">
+                <div class="flex flex-col lg:flex-row gap-6 hero-container">
+                    <!-- Main Article Card -->
+                    <div class="article-card-bg rounded-2xl p-8 lg:w-2/3 h-full flex flex-col justify-end text-white hover-scale transition">
+                        <h2 class="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+                            Система ранжирования научных статей
+                        </h2>
+                        <p class="text-lg md:text-xl opacity-90 mb-6">
+                            С использованием ИИ для быстрого и точного поиска релевантных публикаций
+                        </p>
+                    </div>
+                    
+                    <!-- Features Cards -->
+                    <div class="lg:w-1/3 feature-cards-container flex flex-col gap-4">
+                        <div class="feature-card-bg rounded-2xl p-6 text-white hover-scale transition h-full">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-semibold">Удобные фильтры</h3>
+                                <span class="bg-white bg-opacity-30 text-sm font-medium px-3 py-1 rounded-full">01</span>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card-bg rounded-2xl p-6 text-white hover-scale transition h-full">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-semibold">Более 1k статей</h3>
+                                <span class="bg-white bg-opacity-30 text-sm font-medium px-3 py-1 rounded-full">02</span>
+                            </div>
+                        </div>
+                        
+                        <div class="feature-card-bg rounded-2xl p-6 text-white hover-scale transition h-full">
+                            <div class="flex justify-between items-center">
+                                <h3 class="text-xl font-semibold">Система рейтингов</h3>
+                                <span class="bg-white bg-opacity-30 text-sm font-medium px-3 py-1 rounded-full">03</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Top Articles Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8">Случайные статьи</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="top-articles-container">
+                    <!-- Articles will be loaded here dynamically -->
+                    <div class="flex items-center justify-center py-12">
+                        <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+                        <span class="ml-3 text-gray-600">Загрузка статей...</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Categories Section -->
+            <section class="mb-12">
+                <h2 class="text-2xl md:text-3xl font-bold text-gray-800 mb-8">Рандомные категории</h2>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4" id="categories-container">
+                    <!-- Categories will be loaded here dynamically -->
+                </div>
+                
+                <div class="text-center mt-8">
+                    <button id="show-all-categories" class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-200 font-medium">
+                        <i class="fas fa-th-large mr-2"></i>
+                        Все категории
+                    </button>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#f5f5f0] text-gray-800 py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between gap-8">
+                    <!-- Brand section -->
+                    <div class="max-w-xs">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-900">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-[#2563eb] rounded-md">
+                                <span class="text-xl font-light text-white">AI</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">
+                            Система ранжирования научных статей с использованием искусственного интеллекта для исследователей и академиков.
+                        </p>
+                        <div class="mt-6 flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Навигация</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Главная</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Статьи</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Рейтинги</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>О проекте</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ресурсы</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Блог</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Документация</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>API</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Поддержка</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">contact@rankai.ru</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-phone mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">+7 (XXX) XXX-XX-XX</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">Москва, Россия</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 mb-4 md:mb-0 text-sm">
+                        © 2025 Rank AI. Все права защищены.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Политика конфиденциальности</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Условия использования</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Cookie</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Article Popup -->
+    <div id="article-popup" class="popup-overlay">
+        <div class="popup-content">
+            <button class="close-popup">&times;</button>
+            <div id="article-content">
+                <!-- Content will be loaded here by JavaScript -->
+            </div>
+            
+            <!-- Similar Articles Section -->
+            <div class="mt-12">
+                <h3 class="text-xl font-semibold mb-6 pb-2 border-b border-gray-200">Похожие статьи</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="similar-articles">
+                    <!-- Similar articles will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Popup -->
+    <div id="login-popup" class="popup-overlay">
+        <div class="popup-content login-popup">
+            <button class="close-popup">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Вход в систему</h2>
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-username" class="block text-sm font-medium text-gray-700 mb-1">Логин</label>
+                    <input type="text" id="login-username" name="username" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+                    <input type="password" id="login-password" name="password" required
+                        class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div id="login-error" class="text-red-600 text-sm hidden"></div>
+                <button type="submit" id="login-submit"
+                    class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                    Войти
+                </button>
+            </form>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">
+                    Нет аккаунта?
+                    <button id="register-link" onclick="showRegisterPopup()" class="text-blue-600 hover:text-blue-800">
+                        Зарегистрироваться
+                    </button>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Popup -->
+    <div id="register-popup" class="popup-overlay">
+        <div class="popup-content register-popup">
+            <button class="close-popup">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Регистрация</h2>
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="reg-name" class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
+                    <input type="text" id="reg-name" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ваше имя" required>
+                </div>
+                <div>
+                    <label for="reg-surname" class="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
+                    <input type="text" id="reg-surname" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Ваша фамилия" required>
+                </div>
+                <div>
+                    <label for="reg-username" class="block text-sm font-medium text-gray-700 mb-1">Логин</label>
+                    <input type="text" id="reg-username" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Придумайте логин" required>
+                </div>
+                <div>
+                    <label for="reg-password" class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+                    <input type="password" id="reg-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Придумайте пароль" required>
+                </div>
+                <div>
+                    <label for="reg-confirm-password" class="block text-sm font-medium text-gray-700 mb-1">Подтвердите пароль</label>
+                    <input type="password" id="reg-confirm-password" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Повторите пароль" required>
+                </div>
+                <div id="register-error" class="text-red-600 text-sm hidden"></div>
+                <div class="flex items-center">
+                    <input type="checkbox" id="terms" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" required>
+                    <label for="terms" class="ml-2 block text-sm text-gray-700">
+                        Я согласен с <a href="#" id="terms-link" class="text-blue-600 hover:text-blue-500">условиями использования</a>
+                    </label>
+                </div>
+                <button type="submit" id="register-submit" class="w-full bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition duration-200">
+                    Зарегистрироваться
+                </button>
+                <div class="text-center text-sm text-gray-600">
+                    Уже есть аккаунт? <a href="#" id="login-link" class="text-blue-600 hover:text-blue-500">Войдите</a>
+                </div>
+            </form>
+            <div class="mt-6">
+                <div class="relative">
+                    <div class="absolute inset-0 flex items-center">
+                        <div class="w-full border-t border-gray-300"></div>
+                    </div>
+                    <div class="relative flex justify-center text-sm">
+                        <span class="px-2 bg-white text-gray-500">Или зарегистрируйтесь через</span>
+                    </div>
+                </div>
+                <div class="mt-6 grid grid-cols-2 gap-3">
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-google text-red-500 mr-2"></i> Google
+                    </button>
+                    <button class="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50">
+                        <i class="fab fa-vk text-blue-500 mr-2"></i> ВКонтакте
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms Popup -->
+    <div id="terms-popup" class="popup-overlay">
+        <div class="popup-content terms-popup">
+            <button class="close-popup">&times;</button>
+            <h2 class="text-2xl font-bold mb-6 text-center">Условия использования</h2>
+            
+            <div class="prose max-w-none">
+                <div class="flex justify-center mb-8">
+                    <div class="bg-blue-100 text-blue-800 p-4 rounded-lg w-full">
+                        <div class="flex items-start">
+                            <div class="flex-shrink-0 pt-1">
+                                <i class="fas fa-info-circle text-xl"></i>
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium">
+                                    Пожалуйста, внимательно ознакомьтесь с условиями использования сервиса Rank AI перед регистрацией.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="space-y-6">
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">1. Общие положения</h3>
+                        <p class="text-gray-700">
+                            1.1. Настоящие Условия использования (далее — "Условия") регулируют отношения между Администрацией сервиса Rank AI (далее — "Администрация") и Пользователем (далее — "Вы") в связи с использованием сервиса Rank AI (далее — "Сервис").
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            1.2. Начиная использовать Сервис, Вы соглашаетесь с настоящими Условиями. Если Вы не согласны с Условиями, не используйте Сервис.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">2. Регистрация и учетная запись</h3>
+                        <p class="text-gray-700">
+                            2.1. Для доступа к некоторым функциям Сервиса Вам необходимо зарегистрировать учетную запись. Вы обязуетесь предоставлять точную, актуальную и полную информацию при регистрации.
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            2.2. Вы несете ответственность за сохранение конфиденциальности Вашего пароля и за все действия, которые совершаются с использованием Вашей учетной записи.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">3. Использование сервиса</h3>
+                        <p class="text-gray-700">
+                            3.1. Сервис предоставляет Вам доступ к научным статьям и инструментам для их анализа. Вы можете использовать материалы Сервиса только в личных, некоммерческих целях.
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            3.2. Запрещается:
+                        </p>
+                        <ul class="list-disc pl-5 mt-2 space-y-1 text-gray-700">
+                            <li>Использовать Сервис для незаконных целей</li>
+                            <li>Нарушать права интеллектуальной собственности</li>
+            <li>Пытаться получить несанкционированный доступ к системам Сервиса</li>
+                            <li>Размещать вредоносное программное обеспечение</li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">4. Интеллектуальная собственность</h3>
+                        <p class="text-gray-700">
+                            4.1. Все материалы, размещенные на Сервисе, включая тексты статей, изображения, логотипы, являются собственностью их правообладателей.
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            4.2. Использование материалов Сервиса без разрешения правообладателей запрещено, за исключением случаев, предусмотренных законодательством.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">5. Ограничение ответственности</h3>
+                        <p class="text-gray-700">
+                            5.1. Администрация не гарантирует бесперебойную работу Сервиса и не несет ответственности за любые убытки, возникшие в результате использования или невозможности использования Сервиса.
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            5.2. Администрация оставляет за собой право в любое время изменять или прекращать работу Сервиса без предварительного уведомления.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-xl font-semibold mb-2">6. Заключительные положения</h3>
+                        <p class="text-gray-700">
+                            6.1. Администрация оставляет за собой право изменять настоящие Условия в любое время. Изменения вступают в силу с момента их публикации на Сайте.
+                        </p>
+                        <p class="text-gray-700 mt-2">
+                            6.2. Продолжение использования Сервиса после внесения изменений означает Ваше согласие с новыми Условиями.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="mt-8 p-4 bg-gray-100 rounded-lg">
+                    <p class="text-sm text-gray-700">
+                        Дата последнего обновления: 01.06.2023<br>
+                        Если у Вас есть вопросы по условиям использования, пожалуйста, свяжитесь с нами по адресу legal@rankai.ru
+                    </p>
+                </div>
+                
+                <div class="mt-8 flex justify-center">
+                    <button id="accept-terms" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Я принимаю условия
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+
+        // Add hover effect to all cards
+        const cards = document.querySelectorAll('.hover-scale');
+        cards.forEach(card => {
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'scale(1)';
+            });
+        });
+
+        // Article popup functionality
+        const articlePopup = document.getElementById('article-popup');
+        const articleContent = document.getElementById('article-content');
+        const similarArticlesContainer = document.getElementById('similar-articles');
+        
+        // Функция для перевода категорий с английского на русский
+        function translateCategory(englishCategory) {
+            const categoryMap = {
+                'biology': 'Биология',
+                'physics': 'Физика',
+                'chemistry': 'Химия',
+                'mathematics': 'Математика',
+                'computer-science': 'Информатика',
+                'medicine': 'Медицина',
+                'psychology': 'Психология',
+                'sociology': 'Социология',
+                'economics': 'Экономика',
+                'law': 'Право',
+                'philosophy': 'Философия',
+                'history': 'История',
+                'linguistics': 'Лингвистика',
+                'geography': 'География',
+                'astronomy': 'Астрономия',
+                'engineering': 'Инженерия',
+                'architecture': 'Архитектура',
+                'art': 'Искусство',
+                'literature': 'Литература',
+                'education': 'Образование',
+                'agriculture': 'Сельское хозяйство',
+                'environmental-science': 'Экология',
+                'materials-science': 'Материаловедение',
+                'neuroscience': 'Нейронаука',
+                'robotics': 'Робототехника',
+                'artificial-intelligence': 'Искусственный интеллект',
+                'data-science': 'Наука о данных'
+            };
+            
+            return categoryMap[englishCategory] || englishCategory;
+        }
+
+        // Функция для загрузки топ-3 статей
+        async function loadTopArticles() {
+            try {
+                const response = await fetch('/api/articles/top');
+                if (!response.ok) {
+                    throw new Error('Ошибка загрузки статей');
+                }
+                
+                const articles = await response.json();
+                displayTopArticles(articles);
+            } catch (error) {
+                console.error('Ошибка загрузки топ статей:', error);
+                const container = document.getElementById('top-articles-container');
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                            Ошибка загрузки статей
+                        </h3>
+                        <p class="text-gray-600">Пожалуйста, попробуйте позже</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Функция для отображения топ-3 статей
+        function displayTopArticles(articles) {
+            const container = document.getElementById('top-articles-container');
+            
+            if (!articles || articles.length === 0) {
+                container.innerHTML = `
+                    <div class="col-span-full text-center py-12">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                            Статьи не найдены
+                        </h3>
+                        <p class="text-gray-600">В базе данных пока нет статей</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const romanNumerals = ['I', 'II', 'III'];
+
+            container.innerHTML = articles.map((article, index) => `
+                <div class="rounded-2xl overflow-hidden hover-scale transition square-article cursor-pointer article-card relative" 
+                     data-article='${JSON.stringify(article)}'>
+                    <!-- Фоновое изображение -->
+                    <div class="absolute inset-0 bg-cover bg-center" 
+                         style="background-image: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('${article.preview_image || '/static/assets/no_photo.jpg'}');"
+                         onerror="this.style.backgroundImage = 'linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url(\'/static/assets/no_photo.jpg\')'">
+                    </div>
+                    
+                    <!-- Контент -->
+                    <div class="relative h-full flex flex-col justify-between p-6 text-white z-10">
+                        <div class="flex justify-between items-start">
+                            <span class="text-4xl font-bold opacity-70">${romanNumerals[index]}</span>
+                            <div class="rating-badge text-white font-bold px-3 py-1 rounded-full text-sm">
+                                ${article.rating && article.rating > 0 ? article.rating.toFixed(1) : 'Нет оценки'}
+                            </div>
+                        </div>
+                        <div class="blur-bg rounded-xl p-4">
+                            <h3 class="text-xl font-semibold mb-2 line-clamp-2">${article.title}</h3>
+                            <div class="flex justify-end">
+                                <button class="text-white hover:text-gray-200">
+                                    <i class="fas fa-arrow-up-right-from-square"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Добавляем обработчики кликов на карточки статей
+            document.querySelectorAll('.article-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const articleData = JSON.parse(this.dataset.article);
+                    showArticlePopup(articleData);
+                });
+            });
+        }
+
+        // Функция для показа попапа статьи
+        function showArticlePopup(article) {
+            // Заполняем попап данными статьи
+            articleContent.innerHTML = `
+                <div class="mb-8">
+                    <div class="w-full h-64 bg-gray-200 rounded-lg mb-6 overflow-hidden">
+                        <img src="${article.preview_image || '/static/assets/no_photo.jpg'}" 
+                             alt="${article.title}" 
+                             class="w-full h-full object-cover"
+                             onerror="this.src='/static/assets/no_photo.jpg'">
+                    </div>
+                    <h2 class="text-3xl font-bold mb-4">${article.title}</h2>
+                    <div class="flex items-center space-x-4 mb-6">
+                        <div class="flex items-center">
+                            <i class="fas fa-user text-gray-400 mr-2"></i>
+                            <span class="text-gray-600">${article.authors || 'Автор не указан'}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-calendar text-gray-400 mr-2"></i>
+                            <span class="text-gray-600">${article.date ? new Date(article.date).getFullYear() : 'Год не указан'}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-star text-yellow-400 mr-2"></i>
+                            <span class="font-medium">${article.rating && article.rating > 0 ? article.rating.toFixed(1) : 'Нет оценки'}</span>
+                        </div>
+                        <div class="flex items-center">
+                            <i class="fas fa-tag text-gray-400 mr-2"></i>
+                            <span class="text-gray-600">${translateCategory(article.category) || 'Категория не указана'}</span>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-6">${article.abstract || 'Аннотация отсутствует'}</p>
+                    <div class="flex flex-wrap gap-2 mb-6">
+                        ${(article.keywords || '').split(',').map(keyword => 
+                            `<span class="bg-blue-100 text-blue-800 text-sm px-3 py-1 rounded-full">${keyword.trim()}</span>`
+                        ).join('')}
+                    </div>
+                    <div class="flex justify-between items-center border-t pt-4">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center" onclick="openArticle('${article.file_path}')">
+                            <i class="fas fa-book-open mr-2"></i> Читать статью полностью
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-800 transition flex items-center">
+                            <i class="fas fa-bookmark mr-2"></i> Добавить в закладки
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Загружаем похожие статьи (пока заглушка)
+            similarArticlesContainer.innerHTML = `
+                <div class="col-span-full text-center py-8">
+                    <p class="text-gray-600">Похожие статьи будут загружены позже</p>
+                </div>
+            `;
+            
+            // Показываем попап
+            articlePopup.classList.add('active');
+        }
+
+        // Функция для открытия статьи
+        window.openArticle = function(filePath) {
+            if (!filePath) {
+                console.error('Путь к файлу не указан');
+                return;
+            }
+            
+            console.log('Получен путь к файлу:', filePath);
+            
+            // Закрываем попап статьи перед открытием просмотрщика
+            articlePopup.classList.remove('active');
+            
+            // Проверяем, начинается ли путь с /static/
+            const fullPath = filePath.startsWith('/static/') ? filePath : `/static/${filePath}`;
+            console.log('Полный путь к файлу:', fullPath);
+            
+            const viewer = document.createElement('div');
+            viewer.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            viewer.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-6xl w-full h-[90vh] mx-4 relative">
+                    <button onclick="this.closest('.fixed').remove()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <iframe src="${fullPath}" class="w-full h-full rounded-lg" frameborder="0"></iframe>
+                </div>
+            `;
+            document.body.appendChild(viewer);
+        };
+
+        // Обработка формы регистрации
+        document.getElementById('register-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitButton = document.getElementById('register-submit');
+            const errorDiv = document.getElementById('register-error');
+            
+            // Disable submit button and show loading state
+            submitButton.disabled = true;
+            submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Регистрация...';
+            errorDiv.classList.add('hidden');
+            
+            const formData = {
+                login: document.getElementById('reg-username').value.trim(),
+                name: document.getElementById('reg-name').value.trim(),
+                surname: document.getElementById('reg-surname').value.trim(),
+                password: document.getElementById('reg-password').value
+            };
+            const confirmPassword = document.getElementById('reg-confirm-password').value;
+            const termsAccepted = document.getElementById('terms').checked;
+
+            // Validation
+            if (!formData.login || !formData.name || !formData.surname || !formData.password) {
+                errorDiv.textContent = 'Пожалуйста, заполните все поля';
+                errorDiv.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Зарегистрироваться';
+                return;
+            }
+
+            if (formData.password !== confirmPassword) {
+                errorDiv.textContent = 'Пароли не совпадают';
+                errorDiv.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Зарегистрироваться';
+                return;
+            }
+            
+            if (!termsAccepted) {
+                errorDiv.textContent = 'Необходимо принять условия использования';
+                errorDiv.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Зарегистрироваться';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.detail || 'Ошибка регистрации');
+                }
+                
+                // Automatic login after registration
+                const loginResponse = await fetch('/api/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: `username=${encodeURIComponent(formData.login)}&password=${encodeURIComponent(formData.password)}`
+                });
+
+                if (!loginResponse.ok) {
+                    throw new Error('Ошибка автоматического входа после регистрации');
+                }
+
+                const loginData = await loginResponse.json();
+                localStorage.setItem('access_token', loginData.access_token);
+                
+                // Get user data
+                const userResponse = await fetch('/api/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${loginData.access_token}`
+                    }
+                });
+                
+                if (!userResponse.ok) {
+                    throw new Error('Ошибка получения данных пользователя');
+                }
+
+                const userData = await userResponse.json();
+                localStorage.setItem('user_id', userData.id);
+                localStorage.setItem('user_first_name', userData.first_name);
+                localStorage.setItem('user_last_name', userData.last_name);
+                
+                // Close popup and update UI
+                document.getElementById('register-popup').classList.remove('active');
+                await updateAuthState();
+                
+                // Redirect to profile page
+                window.location.href = `/static/my_profile.html?id=${userData.id}`;
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Зарегистрироваться';
+                console.error("Ошибка регистрации:", error);
+            }
+        });
+
+        // Обработка формы входа
+        document.getElementById('login-form')?.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const username = document.getElementById('login-username').value;
+            const password = document.getElementById('login-password').value;
+            const errorDiv = document.getElementById('login-error');
+            const submitButton = this.querySelector('button[type="submit"]');
+
+            try {
+                // Disable submit button and show loading state
+                submitButton.disabled = true;
+                submitButton.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Вход...';
+                errorDiv.classList.add('hidden');
+
+                const formData = new URLSearchParams();
+                formData.append('username', username);
+                formData.append('password', password);
+                formData.append('grant_type', 'password');
+
+                const response = await fetch('/api/token', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'Accept': 'application/json'
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (!response.ok || data.detail) {
+                    throw new Error(data.detail || 'Неверный логин или пароль');
+                }
+                
+                // Сохраняем токен
+                localStorage.setItem('access_token', data.access_token);
+                
+                // Получаем данные пользователя
+                const userResponse = await fetch('/api/users/me', {
+                    headers: {
+                        'Authorization': `Bearer ${data.access_token}`,
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!userResponse.ok) {
+                    throw new Error('Ошибка получения данных пользователя');
+                }
+
+                const userData = await userResponse.json();
+                
+                // Сохраняем данные пользователя
+                localStorage.setItem('user_id', userData.id);
+                localStorage.setItem('user_first_name', userData.first_name);
+                localStorage.setItem('user_last_name', userData.last_name);
+                
+                // Закрываем попап
+                document.getElementById('login-popup').classList.remove('active');
+                
+                // Обновляем отображение
+                updateAuthState();
+                
+                // Перенаправляем на страницу профиля
+                window.location.href = `/static/my_profile.html?id=${userData.id}`;
+            } catch (error) {
+                errorDiv.textContent = error.message;
+                errorDiv.classList.remove('hidden');
+                submitButton.disabled = false;
+                submitButton.innerHTML = 'Войти';
+                console.error("Ошибка входа:", error);
+            }
+        });
+
+        // Функция для обновления состояния авторизации
+        async function updateAuthState() {
+            const token = localStorage.getItem('access_token');
+            const loginBtn = document.getElementById('login-btn');
+            const userProfileBtn = document.getElementById('user-profile');
+            const userFullname = document.getElementById('userFullName');
+
+            if (token) {
+                try {
+                    const response = await fetch('/api/users/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        const userData = await response.json();
+                        
+                        // Прячем кнопку входа и показываем профиль
+                        if (loginBtn) {
+                            loginBtn.classList.add('hidden');
+                        }
+                        if (userProfileBtn) {
+                            userProfileBtn.classList.remove('hidden');
+                        }
+                        
+                        const fullName = `${userData.name} ${userData.surname}`;
+                        if (userFullname) {
+                            userFullname.textContent = fullName;
+                        }
+                        localStorage.setItem('user_id', userData.id);
+                    } else if (response.status === 401) {
+                        // Если токен недействителен, выходим
+                        localStorage.clear();
+                        if (loginBtn) {
+                            loginBtn.classList.remove('hidden');
+                        }
+                        if (userProfileBtn) {
+                            userProfileBtn.classList.add('hidden');
+                        }
+                    }
+                } catch (error) {
+                    console.error('Ошибка загрузки данных пользователя:', error);
+                    if (loginBtn) {
+                        loginBtn.classList.remove('hidden');
+                    }
+                    if (userProfileBtn) {
+                        userProfileBtn.classList.add('hidden');
+                    }
+                }
+            } else {
+                // Показываем кнопку входа и прячем профиль
+                if (loginBtn) {
+                    loginBtn.classList.remove('hidden');
+                }
+                if (userProfileBtn) {
+                    userProfileBtn.classList.add('hidden');
+                }
+            }
+        }
+
+        // Обработчик клика по профилю пользователя
+        document.getElementById('user-profile')?.addEventListener('click', function() {
+            const userId = localStorage.getItem('user_id');
+            if (userId) {
+                window.location.href = `/static/my_profile.html?id=${userId}`;
+            }
+        });
+
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            updateAuthState();
+            loadRandomCategories();
+            loadTopArticles(); // Загружаем топ-3 статьи из БД
+            
+            // Управление попапами
+            const loginPopup = document.getElementById('login-popup');
+            const registerPopup = document.getElementById('register-popup');
+            const termsPopup = document.getElementById('terms-popup');
+            
+            // Функция для показа попапа регистрации
+            window.showRegisterPopup = function() {
+                loginPopup.classList.remove('active');
+                registerPopup.classList.add('active');
+            };
+            
+            // Открытие попапа входа
+            document.getElementById('login-btn')?.addEventListener('click', function() {
+                loginPopup.classList.add('active');
+            });
+
+            // Переключение между попапами
+            document.querySelector('button[onclick="showRegisterPopup()"]')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                showRegisterPopup();
+            });
+
+            document.getElementById('login-link')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                registerPopup.classList.remove('active');
+                loginPopup.classList.add('active');
+            });
+
+            // Условия использования
+            document.getElementById('terms-link')?.addEventListener('click', function(e) {
+                e.preventDefault();
+                termsPopup.classList.add('active');
+            });
+
+            document.getElementById('accept-terms')?.addEventListener('click', function() {
+                termsPopup.classList.remove('active');
+                document.getElementById('terms').checked = true;
+            });
+
+            // Закрытие попапов
+            document.querySelectorAll('.close-popup').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.popup-overlay').classList.remove('active');
+                });
+            });
+
+            // Закрытие при клике вне контента
+            document.querySelectorAll('.popup-overlay').forEach(popup => {
+                popup.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                    }
+                });
+            });
+
+            // Обработчик формы поиска
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const aiSearchToggle = document.getElementById('ai-search-toggle');
+
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (!query) return;
+
+                // Если включен ИИ-поиск, добавляем параметр ai=true
+                if (aiSearchToggle.checked) {
+                    window.location.href = `/static/search.html?q=${encodeURIComponent(query)}&ai=true`;
+                } else {
+                    window.location.href = `/static/search.html?q=${encodeURIComponent(query)}`;
+                }
+            });
+        });
+
+        // Функция для загрузки рандомных категорий
+        function loadRandomCategories() {
+            const categories = [
+                { name: 'Биология', icon: 'fas fa-dna', value: 'biology' },
+                { name: 'Физика', icon: 'fas fa-atom', value: 'physics' },
+                { name: 'Химия', icon: 'fas fa-flask', value: 'chemistry' },
+                { name: 'Математика', icon: 'fas fa-square-root-alt', value: 'mathematics' },
+                { name: 'Информатика', icon: 'fas fa-laptop-code', value: 'computer-science' },
+                { name: 'Медицина', icon: 'fas fa-heartbeat', value: 'medicine' },
+                { name: 'Психология', icon: 'fas fa-brain', value: 'psychology' },
+                { name: 'Социология', icon: 'fas fa-users', value: 'sociology' },
+                { name: 'Экономика', icon: 'fas fa-chart-line', value: 'economics' },
+                { name: 'Право', icon: 'fas fa-gavel', value: 'law' },
+                { name: 'Философия', icon: 'fas fa-lightbulb', value: 'philosophy' },
+                { name: 'История', icon: 'fas fa-landmark', value: 'history' },
+                { name: 'Лингвистика', icon: 'fas fa-language', value: 'linguistics' },
+                { name: 'География', icon: 'fas fa-globe', value: 'geography' },
+                { name: 'Астрономия', icon: 'fas fa-meteor', value: 'astronomy' },
+                { name: 'Инженерия', icon: 'fas fa-cogs', value: 'engineering' },
+                { name: 'Архитектура', icon: 'fas fa-building', value: 'architecture' },
+                { name: 'Искусство', icon: 'fas fa-palette', value: 'art' },
+                { name: 'Литература', icon: 'fas fa-book', value: 'literature' },
+                { name: 'Образование', icon: 'fas fa-graduation-cap', value: 'education' },
+                { name: 'Сельское хозяйство', icon: 'fas fa-seedling', value: 'agriculture' },
+                { name: 'Экология', icon: 'fas fa-leaf', value: 'environmental-science' },
+                { name: 'Материаловедение', icon: 'fas fa-microchip', value: 'materials-science' },
+                { name: 'Нейронаука', icon: 'fas fa-brain', value: 'neuroscience' },
+                { name: 'Робототехника', icon: 'fas fa-robot', value: 'robotics' },
+                { name: 'Искусственный интеллект', icon: 'fas fa-robot', value: 'artificial-intelligence' },
+                { name: 'Наука о данных', icon: 'fas fa-database', value: 'data-science' }
+            ];
+
+            // Перемешиваем массив категорий
+            const shuffledCategories = categories.sort(() => Math.random() - 0.5);
+            
+            // Берем первые 6 категорий
+            const selectedCategories = shuffledCategories.slice(0, 6);
+            
+            displayCategories(selectedCategories, false);
+        }
+
+        // Функция для отображения всех категорий
+        function loadAllCategories() {
+            const categories = [
+                { name: 'Биология', icon: 'fas fa-dna', value: 'biology' },
+                { name: 'Физика', icon: 'fas fa-atom', value: 'physics' },
+                { name: 'Химия', icon: 'fas fa-flask', value: 'chemistry' },
+                { name: 'Математика', icon: 'fas fa-square-root-alt', value: 'mathematics' },
+                { name: 'Информатика', icon: 'fas fa-laptop-code', value: 'computer-science' },
+                { name: 'Медицина', icon: 'fas fa-heartbeat', value: 'medicine' },
+                { name: 'Психология', icon: 'fas fa-brain', value: 'psychology' },
+                { name: 'Социология', icon: 'fas fa-users', value: 'sociology' },
+                { name: 'Экономика', icon: 'fas fa-chart-line', value: 'economics' },
+                { name: 'Право', icon: 'fas fa-gavel', value: 'law' },
+                { name: 'Философия', icon: 'fas fa-lightbulb', value: 'philosophy' },
+                { name: 'История', icon: 'fas fa-landmark', value: 'history' },
+                { name: 'Лингвистика', icon: 'fas fa-language', value: 'linguistics' },
+                { name: 'География', icon: 'fas fa-globe', value: 'geography' },
+                { name: 'Астрономия', icon: 'fas fa-meteor', value: 'astronomy' },
+                { name: 'Инженерия', icon: 'fas fa-cogs', value: 'engineering' },
+                { name: 'Архитектура', icon: 'fas fa-building', value: 'architecture' },
+                { name: 'Искусство', icon: 'fas fa-palette', value: 'art' },
+                { name: 'Литература', icon: 'fas fa-book', value: 'literature' },
+                { name: 'Образование', icon: 'fas fa-graduation-cap', value: 'education' },
+                { name: 'Сельское хозяйство', icon: 'fas fa-seedling', value: 'agriculture' },
+                { name: 'Экология', icon: 'fas fa-leaf', value: 'environmental-science' },
+                { name: 'Материаловедение', icon: 'fas fa-microchip', value: 'materials-science' },
+                { name: 'Нейронаука', icon: 'fas fa-brain', value: 'neuroscience' },
+                { name: 'Робототехника', icon: 'fas fa-robot', value: 'robotics' },
+                { name: 'Искусственный интеллект', icon: 'fas fa-robot', value: 'artificial-intelligence' },
+                { name: 'Наука о данных', icon: 'fas fa-database', value: 'data-science' }
+            ];
+
+            displayCategories(categories, true);
+        }
+
+        // Функция для отображения категорий
+        function displayCategories(categories, isAllCategories) {
+            const container = document.getElementById('categories-container');
+            const button = document.getElementById('show-all-categories');
+            
+            if (!container) return;
+
+            // Изменяем классы контейнера в зависимости от количества категорий
+            if (isAllCategories) {
+                container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4';
+                button.innerHTML = '<i class="fas fa-random mr-2"></i>Случайные категории';
+                button.onclick = loadRandomCategories;
+            } else {
+                container.className = 'grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4';
+                button.innerHTML = '<i class="fas fa-th-large mr-2"></i>Все категории';
+                button.onclick = loadAllCategories;
+            }
+
+            container.innerHTML = categories.map(category => `
+                <div class="bg-white rounded-xl p-4 shadow-md hover:shadow-lg transition cursor-pointer text-center" 
+                     onclick="searchByCategory('${category.value}')">
+                    <div class="text-blue-600 mb-2 text-2xl">
+                        <i class="${category.icon}"></i>
+                    </div>
+                    <h3 class="font-medium text-sm">${translateCategory(category.value) || category.value}</h3>
+                </div>
+            `).join('');
+        }
+
+        // Функция для поиска по категории
+        function searchByCategory(categoryValue) {
+            console.log(`Переход к поиску по категории: ${categoryValue}`);
+            window.location.href = `/static/search.html?category=${encodeURIComponent(categoryValue)}`;
+        }
+
+        // Функция для проверки всех категорий в БД
+        async function checkAllCategories() {
+            try {
+                console.log('Проверяем все категории в базе данных...');
+                const response = await fetch('/api/search/articles');
+                const articles = await response.json();
+                
+                const categories = [...new Set(articles.map(article => article.category))];
+                console.log('Найденные категории в БД:', categories);
+                
+                // Показываем в консоли
+                categories.forEach(cat => {
+                    console.log(`- "${cat}"`);
+                });
+                
+            } catch (error) {
+                console.error('Ошибка при получении категорий:', error);
+            }
+        }
+
+        
+    </script>
+</body>
+</html>

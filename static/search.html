@@ -1,0 +1,1451 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Результаты поиска | Rank AI</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+            border-radius: 0;
+            margin-top: 0;
+        }
+
+        .article-card-bg {
+            background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('https://images.unsplash.com/photo-1507666405895-422eee7d517f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1470&q=80');
+            background-size: cover;
+            background-position: center;
+        }
+        
+        .rating-badge {
+            background: linear-gradient(135deg, #8cff00 0%, #4caf50 100%);
+        }
+        
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(69, 151, 236, 0.3);
+        }
+        
+        .blur-bg {
+            backdrop-filter: blur(8px);
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+        
+        .hover-scale:hover {
+            transform: scale(1.02);
+            transition: transform 0.3s ease;
+        }
+        
+        .square-article {
+            aspect-ratio: 1/1;
+        }
+        
+        .filter-checkbox:checked + .filter-label {
+            background-color: #3a7bd5;
+            color: white;
+        }
+        
+        .view-toggle.active {
+            background-color: #3a7bd5;
+            color: white;
+        }
+        
+        .article-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+        
+        .list-view-article {
+            transition: all 0.3s ease;
+        }
+        
+        .list-view-article:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Custom scrollbar for filters */
+        .filter-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .filter-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        
+        .filter-scroll::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 10px;
+        }
+        
+        .filter-scroll::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        /* Article Popup Styles */
+        .popup-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .popup-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .popup-content {
+            background-color: white;
+            border-radius: 16px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .popup-overlay.active .popup-content {
+            transform: translateY(0);
+        }
+
+        .close-popup {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            font-size: 24px;
+            color: #666;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .close-popup:hover {
+            color: #333;
+        }
+
+        .similar-articles-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .similar-article-card {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            height: 120px;
+        }
+
+        .similar-article-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .similar-article-rating {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: linear-gradient(135deg, #8cff00 0%, #4caf50 100%);
+            color: white;
+            font-weight: bold;
+            font-size: 12px;
+            padding: 3px 8px;
+            border-radius: 12px;
+        }
+
+        .similar-article-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: white;
+            padding: 10px;
+        }
+
+        .toggle-circle {
+            transition: all 0.3s ease;
+            margin-left: 0;
+            min-width: 1.25rem;
+        }
+
+        #ai-search-toggle:checked ~ div > div {
+            left: calc(100% - 22px) !important;
+        }
+
+        #ai-search-toggle:checked ~ div > div i {
+            color: white !important;
+        }
+
+        #user-profile-btn {
+            transition: all 0.3s ease;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+        }
+
+        #user-profile-btn:hover {
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        #user-initials {
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+            font-weight: 500;
+        }
+        
+        /* Line clamp utilities */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+        .line-clamp-3 {
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header/Navigation -->
+        <header class="gradient-bg shadow-lg">
+            <div class="container mx-auto px-4 py-3">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <a href="../index.html" class="flex items-center">
+                            <h1 class="text-2xl md:text-3xl font-bold text-white">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                                <span class="text-xl md:text-2xl font-light text-gray-800">AI</span>
+                            </div>
+                        </a>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                        <form id="search-form" action="/static/search.html" method="GET" class="relative flex items-center bg-white bg-opacity-40 rounded-full px-4 py-2">
+                            <input 
+                                type="text" 
+                                name="q"
+                                id="search-input"
+                                placeholder="Поиск научных статей..." 
+                                class="search-input w-full bg-transparent border-none text-white placeholder-white focus:ring-0 pl-2"
+                                required
+                            >
+                            <div class="flex items-center ml-2">
+                                <label class="relative inline-flex items-center cursor-pointer group">
+                                    <input type="checkbox" id="ai-search-toggle" class="sr-only peer">
+                                    <div class="w-14 h-7 bg-gray-200 rounded-full p-1 transition-colors duration-300 peer-checked:bg-blue-600 relative flex items-center">
+                                        <div class="absolute w-5 h-5 bg-white rounded-full shadow-md flex items-center justify-center transition-all duration-300" style="left: 2px; top: 50%; transform: translateY(-50%);">
+                                            <i class="fas fa-robot text-xs text-blue-600"></i>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="text-white ml-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </form>
+                    </div>
+                    
+                    <!-- Auth Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <!-- Кнопка входа (показывается когда пользователь не авторизован) -->
+                        <button id="login-btn" class="bg-white text-gray-800 font-medium px-6 py-2 rounded-full hover:bg-gray-100 transition hidden">
+                            Войти
+                        </button>
+                        
+                        <!-- Блок пользователя (показывается после авторизации) -->
+                        <div id="user-profile" class="relative group hidden">
+                            <button class="flex items-center space-x-3 bg-white bg-opacity-10 rounded-lg px-4 py-2 hover:bg-opacity-20 transition-all duration-200">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <div class="hidden md:block text-left">
+                                    <span class="block text-white font-medium text-sm" id="userFullName">Загрузка...</span>
+                                    <span class="block text-white text-opacity-70 text-xs">Профиль</span>
+                                </div>
+                                <i class="fas fa-chevron-down text-white text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                <a href="my_profile.html" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-user-circle mr-2"></i>Профиль
+                                </a>
+                                <a href="my_profile.html#settings" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                                    <i class="fas fa-cog mr-2"></i>Настройки
+                                </a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" onclick="logout()">
+                                    <i class="fas fa-sign-out-alt mr-2"></i>Выйти
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Search Results Header -->
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8">
+                <div class="mb-4 md:mb-0">
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-800">Результаты поиска</h1>
+                </div>
+                
+                <div id="view-controls" class="flex items-center space-x-4" style="display: none;">
+                    <!-- View Toggle -->
+                    <div class="flex bg-gray-200 rounded-lg p-1">
+                        <button id="grid-view" class="view-toggle p-2 rounded-lg active" title="Плиточный вид">
+                            <i class="fas fa-th-large"></i>
+                        </button>
+                        <button id="list-view" class="view-toggle p-2 rounded-lg" title="Список">
+                            <i class="fas fa-list"></i>
+                        </button>
+                    </div>
+                    
+                    <!-- Sort Dropdown -->
+                    <div class="relative">
+                        <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                            <option>Сортировать по</option>
+                            <option value="relevance">Релевантности</option>
+                            <option value="date-newest">Дате (новые)</option>
+                            <option value="date-oldest">Дате (старые)</option>
+                            <option value="rating">Рейтингу</option>
+                            <option value="title">Названию</option>
+                        </select>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Filters Sidebar -->
+                <aside id="filters-sidebar" class="lg:w-1/4">
+                    <div class="bg-white rounded-xl shadow-md p-6 sticky top-4">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-xl font-bold">Фильтры</h2>
+                            <button onclick="resetFilters()" class="text-blue-600 hover:text-blue-800 text-sm">Сбросить все</button>
+                        </div>
+                        
+                        <!-- View Mode Toggle -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold mb-3">Вид отображения</h3>
+                            <div class="flex space-x-4">
+                                <label class="flex items-center">
+                                    <input type="radio" name="view_mode" value="grid" checked class="mr-2">
+                                    <span>Сетка</span>
+                                </label>
+                                <label class="flex items-center">
+                                    <input type="radio" name="view_mode" value="list" class="mr-2">
+                                    <span>Список</span>
+                                </label>
+                            </div>
+                        </div>
+                        
+                        <!-- Sort Options -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold mb-3">Сортировка</h3>
+                            <div class="space-y-3">
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Сортировать по</label>
+                                    <select name="sort_by" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="date">Дате</option>
+                                        <option value="rating">Рейтингу</option>
+                                        <option value="title">Названию</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-sm text-gray-600 mb-1">Порядок</label>
+                                    <select name="sort_order" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                        <option value="desc">По убыванию</option>
+                                        <option value="asc">По возрастанию</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Categories Filter -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold mb-3">Категории</h3>
+                            <select name="category" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Все категории</option>
+                                <option value="biology">Биология</option>
+                                <option value="physics">Физика</option>
+                                <option value="chemistry">Химия</option>
+                                <option value="mathematics">Математика</option>
+                                <option value="computer-science">Информатика</option>
+                                <option value="medicine">Медицина</option>
+                                <option value="psychology">Психология</option>
+                                <option value="sociology">Социология</option>
+                                <option value="economics">Экономика</option>
+                                <option value="law">Право</option>
+                                <option value="philosophy">Философия</option>
+                                <option value="history">История</option>
+                                <option value="linguistics">Лингвистика</option>
+                                <option value="geography">География</option>
+                                <option value="astronomy">Астрономия</option>
+                                <option value="engineering">Инженерия</option>
+                                <option value="architecture">Архитектура</option>
+                                <option value="art">Искусство</option>
+                                <option value="literature">Литература</option>
+                                <option value="education">Образование</option>
+                                <option value="agriculture">Сельское хозяйство</option>
+                                <option value="environmental-science">Экология</option>
+                                <option value="materials-science">Материаловедение</option>
+                                <option value="neuroscience">Нейронаука</option>
+                                <option value="robotics">Робототехника</option>
+                                <option value="artificial-intelligence">Искусственный интеллект</option>
+                                <option value="data-science">Наука о данных</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Year Filter -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold mb-3">Год публикации</h3>
+                            <select name="year" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                <option value="">Все годы</option>
+                                <option value="2023">2023</option>
+                                <option value="2022">2022</option>
+                                <option value="2021">2021</option>
+                                <option value="2020">2020</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Rating Filter -->
+                        <div class="mb-6">
+                            <h3 class="font-semibold mb-3">Минимальный рейтинг</h3>
+                            <input type="range" name="min_rating" min="0" max="10" step="0.1" value="0" 
+                                   class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer">
+                            <div class="flex justify-between text-sm text-gray-600 mt-1">
+                                <span>0</span>
+                                <span id="rating-value">0</span>
+                                <span>10</span>
+                            </div>
+                        </div>
+
+                        <!-- Apply Filters Button -->
+                        <button onclick="applyFilters()" class="w-full bg-blue-600 text-white py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-filter mr-2"></i>
+                            Применить фильтры
+                        </button>
+                    </div>
+                </aside>
+                
+                <!-- Results Content -->
+                <div id="search-results" class="lg:w-3/4">
+                    <!-- Results will be loaded here dynamically -->
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#f5f5f0] text-gray-800 py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between gap-8">
+                    <!-- Brand section -->
+                    <div class="max-w-xs">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-900">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-[#2563eb] rounded-md">
+                                <span class="text-xl font-light text-white">AI</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">
+                            Система ранжирования научных статей с использованием искусственного интеллекта для исследователей и академиков.
+                        </p>
+                        <div class="mt-6 flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Навигация</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Главная</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Статьи</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Рейтинги</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>О проекте</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ресурсы</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Блог</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Документация</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>API</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Поддержка</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">contact@rankai.ru</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-phone mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">+7 (XXX) XXX-XX-XX</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">Москва, Россия</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 mb-4 md:mb-0 text-sm">
+                        © 2025 Rank AI. Все права защищены.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Политика конфиденциальности</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Условия использования</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Cookie</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Article Popup -->
+    <div class="popup-overlay" id="article-popup">
+        <div class="popup-content">
+            <span class="close-popup"><i class="fas fa-times"></i></span>
+            <div id="article-content">
+                <!-- Content will be loaded here dynamically -->
+            </div>
+            
+            <div class="mt-8">
+                <h3 class="text-xl font-semibold mb-4">Похожие статьи</h3>
+                <div class="similar-articles-container" id="similar-articles">
+                    <!-- Similar articles will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        
+
+        // DOM elements
+        const articlePopup = document.getElementById('article-popup');
+        const articleContent = document.getElementById('article-content');
+        const similarArticlesContainer = document.getElementById('similar-articles');
+        const articleCards = document.querySelectorAll('.article-card');
+
+        // View Toggle Functionality
+        const gridViewBtn = document.getElementById('grid-view');
+        const listViewBtn = document.getElementById('list-view');
+        const gridViewContent = document.getElementById('grid-view-content');
+        const listViewContent = document.getElementById('list-view-content');
+        
+        gridViewBtn.addEventListener('click', function() {
+            this.classList.add('active');
+            listViewBtn.classList.remove('active');
+            gridViewContent.classList.remove('hidden');
+            listViewContent.classList.add('hidden');
+        });
+        
+        listViewBtn.addEventListener('click', function() {
+            this.classList.add('active');
+            gridViewBtn.classList.remove('active');
+            listViewContent.classList.remove('hidden');
+            gridViewContent.classList.add('hidden');
+        });
+        
+        // Filter Checkbox Functionality
+        const filterCheckboxes = document.querySelectorAll('.filter-checkbox');
+        filterCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function() {
+                const label = document.querySelector(`label[for="${this.id}"]`);
+                if(this.checked) {
+                    label.classList.add('bg-blue-600', 'text-white');
+                    label.classList.remove('bg-gray-100', 'hover:bg-gray-200');
+                } else {
+                    label.classList.remove('bg-blue-600', 'text-white');
+                    label.classList.add('bg-gray-100', 'hover:bg-gray-200');
+                }
+            });
+        });
+        
+        // Show article popup
+        articleCards.forEach(card => {
+            card.addEventListener('click', function() {
+                const articleId = this.getAttribute('data-article-id');
+                const article = articles[articleId];
+                
+                // Populate popup with article data including image
+                articleContent.innerHTML = `
+                    <img src="${article.image}" alt="${article.title}" class="w-full h-64 object-cover rounded-lg mb-6">
+                    <div class="flex flex-wrap gap-4 mb-6">
+                        <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">${article.category}</div>
+                        <div class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">${article.author}</div>
+                        <div class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm">${article.journal}, ${article.year}</div>
+                        <div class="bg-green-100 text-green-800 px-3 py-1 rounded-full text-sm font-bold">Рейтинг: ${article.rating}</div>
+                    </div>
+                    
+                    <h2 class="text-2xl font-bold mb-4">${article.title}</h2>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-2">Аннотация</h3>
+                        <p class="text-gray-700">${article.abstract}</p>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-2">Ключевые слова</h3>
+                        <div class="flex flex-wrap gap-2">
+                            ${article.keywords.split(', ').map(keyword => 
+                                `<span class="bg-gray-200 text-gray-700 px-2 py-1 rounded-full text-sm">${keyword}</span>`
+                            ).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="mb-6">
+                        <h3 class="text-lg font-semibold mb-2">Полный текст</h3>
+                        <p class="text-gray-700">${article.fullText}</p>
+                    </div>
+                    
+                    <div class="flex justify-between items-center border-t pt-4">
+                        <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition flex items-center" id="open-full-article">
+                            <i class="fas fa-book-open mr-2"></i> Читать статью полностью
+                        </button>
+                        <button class="text-blue-600 hover:text-blue-800 transition flex items-center">
+                            <i class="fas fa-bookmark mr-2"></i> Добавить в закладки
+                        </button>
+                    </div>
+                `;
+                
+                // Add event listener to open full article button
+                document.getElementById('open-full-article').addEventListener('click', function() {
+                    alert('Открывается полный текст статьи...');
+                    // In a real app, this would open the full article
+                });
+                
+                // Load similar articles
+                similarArticlesContainer.innerHTML = similarArticles[articleId].map(article => `
+                    <div class="similar-article-card bg-white rounded-lg shadow-md cursor-pointer" data-article-id="${article.id}">
+                        <img src="${article.image}" alt="${article.title}" class="similar-article-image">
+                        <div class="similar-article-rating">${article.rating}</div>
+                        <div class="similar-article-overlay">
+                            <h4 class="font-semibold text-lg">${article.title}</h4>
+                            <p class="text-sm opacity-90">${article.author}</p>
+                        </div>
+                    </div>
+                `).join('');
+                
+                // Add click event to similar articles
+                document.querySelectorAll('.similar-article-card').forEach(card => {
+                    card.addEventListener('click', function() {
+                        const similarArticleId = this.getAttribute('data-article-id');
+                        alert(`Открывается статья с ID: ${similarArticleId}`);
+                        // In a real app, this would open the similar article
+                    });
+                });
+                
+                // Show popup
+                articlePopup.classList.add('active');
+            });
+        });
+
+        // Close popup
+        document.querySelector('.close-popup').addEventListener('click', function() {
+            articlePopup.classList.remove('active');
+        });
+
+        // Close popup when clicking outside content
+        articlePopup.addEventListener('click', function(e) {
+            if (e.target === this) {
+                this.classList.remove('active');
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Проверяем авторизацию
+            checkAuth();
+            
+            // Проверяем наличие сохраненных данных пользователя
+            const savedName = localStorage.getItem('user_name');
+            const savedSurname = localStorage.getItem('user_surname');
+            const userFullName = document.getElementById('userFullName');
+            
+            if (savedName && savedSurname && userFullName) {
+                userFullName.textContent = `${savedName} ${savedSurname}`;
+            }
+            
+            const searchForm = document.getElementById('search-form');
+            const searchInput = document.getElementById('search-input');
+            const aiSearchToggle = document.getElementById('ai-search-toggle');
+            
+            // Получаем параметр поиска из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const searchParam = urlParams.get('q');
+            const categoryParam = urlParams.get('category');
+            const aiParam = urlParams.get('ai');
+            
+            if (searchParam) {
+                searchInput.value = searchParam;
+                // Если есть параметр ai=true, включаем ИИ-поиск
+                if (aiParam === 'true') {
+                    aiSearchToggle.checked = true;
+                    performAISearch();
+                } else {
+                    performSearch(searchParam);
+                }
+            } else if (categoryParam) {
+                // Если есть параметр category, устанавливаем фильтр и ищем статьи
+                const categorySelect = document.querySelector('select[name="category"]');
+                if (categorySelect) {
+                    categorySelect.value = categoryParam;
+                }
+                // Выполняем поиск без запроса, только по категории
+                performSearchByCategory(categoryParam);
+            }
+            
+            // Обработчик отправки формы поиска
+            searchForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const query = searchInput.value.trim();
+                if (!query) return;
+                
+                // Обновляем URL с параметром поиска
+                const newUrl = `${window.location.pathname}?q=${encodeURIComponent(query)}`;
+                window.history.pushState({ path: newUrl }, '', newUrl);
+                
+                // Проверяем, включен ли ИИ-поиск
+                if (aiSearchToggle.checked) {
+                    performAISearch();
+                } else {
+                    performSearch(query);
+                }
+            });
+            
+            // Обработчик изменения состояния переключателя
+            aiSearchToggle.addEventListener('change', function() {
+                const query = searchInput.value.trim();
+                if (query) {
+                    if (this.checked) {
+                        performAISearch();
+                    } else {
+                        performSearch(query);
+                    }
+                }
+            });
+        });
+
+        // Проверка авторизации и отображение профиля
+        async function checkAuth() {
+            const token = localStorage.getItem('access_token');
+            const loginBtn = document.getElementById('login-btn');
+            const userProfile = document.getElementById('user-profile');
+            const userFullName = document.getElementById('userFullName');
+
+            if (token) {
+                try {
+                    const response = await fetch('/api/users/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        const userData = await response.json();
+                        loginBtn.classList.add('hidden');
+                        userProfile.classList.remove('hidden');
+                        userFullName.textContent = `${userData.name} ${userData.surname}`;
+                        // Сохраняем данные пользователя
+                        localStorage.setItem('user_id', userData.id);
+                        localStorage.setItem('user_name', userData.name);
+                        localStorage.setItem('user_surname', userData.surname);
+                    } else if (response.status === 401) {
+                        // Если токен недействителен, выходим
+                        localStorage.removeItem('access_token');
+                        localStorage.removeItem('user_id');
+                        loginBtn.classList.remove('hidden');
+                        userProfile.classList.add('hidden');
+                    } else {
+                        throw new Error('Ошибка получения данных пользователя');
+                    }
+                } catch (error) {
+                    console.error('Auth error:', error);
+                    localStorage.removeItem('access_token');
+                    localStorage.removeItem('user_id');
+                    loginBtn.classList.remove('hidden');
+                    userProfile.classList.add('hidden');
+                }
+            } else {
+                loginBtn.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+            }
+        }
+
+        // Обработка входа
+        document.getElementById('login-btn').addEventListener('click', () => {
+            window.location.href = '../index.html';
+        });
+
+        // Обработка выхода
+        function logout() {
+            localStorage.removeItem('access_token');
+            localStorage.removeItem('user_id');
+            window.location.reload();
+        }
+
+        // Функция для выполнения поиска
+        async function performSearch(searchQuery) {
+            try {
+                console.log('Выполняем поиск:', searchQuery);
+                
+                // Получаем параметры фильтрации и сортировки
+                const sortBy = document.querySelector('select[name="sort_by"]').value;
+                const sortOrder = document.querySelector('select[name="sort_order"]').value;
+                const category = document.querySelector('select[name="category"]').value;
+                const minRating = document.querySelector('input[name="min_rating"]').value;
+                const year = document.querySelector('select[name="year"]').value;
+                
+                // Формируем URL с параметрами
+                const params = new URLSearchParams({
+                    title: searchQuery,
+                    sort_by: sortBy,
+                    sort_order: sortOrder
+                });
+                
+                if (category) params.append('category', category);
+                if (minRating) params.append('min_rating', minRating);
+                if (year) params.append('year', year);
+                
+                const url = `/api/search/articles?${params.toString()}`;
+                console.log('URL запроса:', url);
+                
+                const response = await fetch(url);
+                console.log('Статус ответа:', response.status);
+                
+                if (!response.ok) {
+                    console.error('Ошибка ответа:', response.status);
+                    displaySearchResults([]);
+                    return;
+                }
+                
+                const articles = await response.json();
+                console.log('Получены статьи:', articles);
+                displaySearchResults(articles);
+                
+            } catch (error) {
+                console.error('Ошибка поиска:', error);
+                displaySearchResults([]);
+            }
+        }
+
+        // Глобальные функции
+        window.openArticle = function(filePath) {
+            if (!filePath) {
+                console.error('Путь к файлу не указан');
+                return;
+            }
+            
+            console.log('Получен путь к файлу:', filePath);
+            
+            // Проверяем, начинается ли путь с /static/
+            const fullPath = filePath.startsWith('/static/') ? filePath : `/static/${filePath}`;
+            console.log('Полный путь к файлу:', fullPath);
+            
+            const viewer = document.createElement('div');
+            viewer.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            viewer.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-6xl w-full h-[90vh] mx-4 relative">
+                    <button onclick="this.closest('.fixed').remove()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700 z-10">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <iframe src="${fullPath}" class="w-full h-full rounded-lg" frameborder="0"></iframe>
+                </div>
+            `;
+            document.body.appendChild(viewer);
+        };
+
+        window.showArticlePopup = function(article) {
+            if (!article) {
+                console.error('Данные статьи не переданы');
+                return;
+            }
+            
+            console.log('Открываем попап для статьи:', article);
+            
+            const popup = document.createElement('div');
+            popup.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+            popup.innerHTML = `
+                <div class="bg-white rounded-xl p-6 max-w-4xl w-full mx-4 relative">
+                    <button onclick="this.closest('.fixed').remove()" class="absolute top-4 right-4 text-gray-500 hover:text-gray-700">
+                        <i class="fas fa-times text-xl"></i>
+                    </button>
+                    <div class="flex flex-col md:flex-row gap-6">
+                        <div class="md:w-1/3">
+                            <img src="${article.preview_image || '/static/assets/default-article.jpg'}" 
+                                 alt="${article.title}" 
+                                 class="w-full h-48 object-cover rounded-lg">
+                        </div>
+                        <div class="md:w-2/3">
+                            <h2 class="text-2xl font-bold mb-4">${article.title}</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <h3 class="font-semibold text-gray-700">Авторы</h3>
+                                    <p class="text-gray-600">${article.authors}</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-700">Категория</h3>
+                                    <p class="text-gray-600">${translateCategory(article.category)}</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-700">Аннотация</h3>
+                                    <p class="text-gray-600">${article.abstract || 'Нет аннотации'}</p>
+                                </div>
+                                <div>
+                                    <h3 class="font-semibold text-gray-700">Ключевые слова</h3>
+                                    <p class="text-gray-600">${article.keywords || 'Нет ключевых слов'}</p>
+                                </div>
+                                <div class="flex justify-end space-x-3 mt-6">
+                                    <button onclick="window.openArticle('${article.file_path}')" 
+                                            class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                        Открыть статью
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(popup);
+        };
+
+        // Функция применения фильтров
+        function applyFilters() {
+            const query = document.getElementById('search-input').value.trim();
+            const aiSearchToggle = document.getElementById('ai-search-toggle');
+            const category = document.querySelector('select[name="category"]').value;
+            const sortBy = document.querySelector('select[name="sort_by"]').value;
+            const sortOrder = document.querySelector('select[name="sort_order"]').value;
+            const minRating = document.querySelector('input[name="min_rating"]').value;
+            const year = document.querySelector('select[name="year"]').value;
+            
+            console.log('Применяем фильтры:');
+            console.log('- Поисковый запрос:', query);
+            console.log('- Категория:', category);
+            console.log('- Сортировка:', sortBy, sortOrder);
+            console.log('- Минимальный рейтинг:', minRating);
+            console.log('- Год:', year);
+            
+            // Если есть поисковый запрос
+            if (query) {
+                if (aiSearchToggle.checked) {
+                    performAISearch();
+                } else {
+                    performSearch(query);
+                }
+            } 
+            // Если нет поискового запроса, но есть фильтры
+            else if (category || minRating || year) {
+                console.log('Выполняем поиск только по фильтрам');
+                performSearchByFilters();
+            }
+            // Если нет ни поиска, ни фильтров, показываем все статьи
+            else {
+                console.log('Показываем все статьи');
+                performSearchByFilters();
+            }
+        }
+
+        // Функция для поиска только по фильтрам (без поискового запроса)
+        async function performSearchByFilters() {
+            try {
+                console.log('=== ПОИСК ПО ФИЛЬТРАМ ===');
+                
+                // Получаем параметры фильтрации и сортировки
+                const sortBy = document.querySelector('select[name="sort_by"]').value;
+                const sortOrder = document.querySelector('select[name="sort_order"]').value;
+                const category = document.querySelector('select[name="category"]').value;
+                const minRating = document.querySelector('input[name="min_rating"]').value;
+                const year = document.querySelector('select[name="year"]').value;
+                
+                console.log('Параметры фильтрации:');
+                console.log('- sort_by:', sortBy);
+                console.log('- sort_order:', sortOrder);
+                console.log('- category:', category);
+                console.log('- min_rating:', minRating);
+                console.log('- year:', year);
+                
+                // Формируем параметры запроса
+                const params = new URLSearchParams({
+                    sort_by: sortBy,
+                    sort_order: sortOrder
+                });
+                
+                if (category) params.append('category', category);
+                if (minRating) params.append('min_rating', minRating);
+                if (year) params.append('year', year);
+                
+                const url = `/api/search/articles?${params.toString()}`;
+                console.log('URL запроса:', url);
+                
+                const response = await fetch(url);
+                console.log('Статус ответа:', response.status);
+                
+                if (!response.ok) {
+                    console.error('Ошибка ответа:', response.status);
+                    const errorText = await response.text();
+                    console.error('Текст ошибки:', errorText);
+                    displaySearchResults([]);
+                    return;
+                }
+                
+                const articles = await response.json();
+                console.log('Получены статьи:', articles);
+                console.log('Количество статей:', articles.length);
+                displaySearchResults(articles);
+                
+            } catch (error) {
+                console.error('Ошибка поиска по фильтрам:', error);
+                console.error('Стек ошибки:', error.stack);
+                displaySearchResults([]);
+            }
+        }
+
+        // Функция сброса фильтров
+        function resetFilters() {
+            document.querySelector('select[name="sort_by"]').value = 'date';
+            document.querySelector('select[name="sort_order"]').value = 'desc';
+            document.querySelector('select[name="category"]').value = '';
+            document.querySelector('select[name="year"]').value = '';
+            document.querySelector('input[name="min_rating"]').value = '0';
+            document.querySelector('#rating-value').textContent = '0';
+        }
+
+        // Обработчики изменения фильтров (кроме вида отображения)
+        document.querySelectorAll('select[name]:not([name="view_mode"]), input[name="min_rating"]').forEach(filter => {
+            filter.addEventListener('change', function() {
+                applyFilters();
+            });
+        });
+
+        // Обработчик изменения рейтинга
+        document.querySelector('input[name="min_rating"]').addEventListener('input', function() {
+            document.querySelector('#rating-value').textContent = this.value;
+            applyFilters();
+        });
+
+        // Обработчики переключения вида отображения
+        document.querySelectorAll('input[name="view_mode"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const resultsContainer = document.getElementById('search-results');
+                const currentArticles = resultsContainer.getAttribute('data-articles');
+                if (currentArticles) {
+                    displaySearchResults(JSON.parse(currentArticles));
+                }
+            });
+        });
+
+        // Функция отображения результатов поиска
+        function displaySearchResults(articles) {
+            const resultsContainer = document.getElementById('search-results');
+            const viewMode = document.querySelector('input[name="view_mode"]:checked').value;
+            
+            // Сохраняем текущие результаты в data-атрибуте
+            resultsContainer.setAttribute('data-articles', JSON.stringify(articles));
+            
+            console.log('Получены результаты:', articles);
+            
+            if (!articles || articles.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                            Статьи не найдены
+                        </h3>
+                    </div>
+                `;
+                return;
+            }
+            
+            if (viewMode === 'grid') {
+                // Отображение в виде сетки
+                resultsContainer.innerHTML = `
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        ${articles.map(article => `
+                            <div class="article-card bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-200 cursor-pointer"
+                                 data-article='${JSON.stringify(article)}'>
+                                <div class="aspect-w-16 aspect-h-9">
+                                    <img src="${article.preview_image || '/static/assets/default-article.jpg'}" 
+                                         alt="${article.title}" 
+                                         class="w-full h-48 object-cover">
+                                </div>
+                                <div class="p-4">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">
+                                            ${translateCategory(article.category)}
+                                        </span>
+                                        <span class="text-sm text-gray-500">${article.date}</span>
+                                    </div>
+                                    <h3 class="text-lg font-bold mb-2 text-gray-800 line-clamp-2">${article.title}</h3>
+                                    <p class="text-gray-600 text-sm line-clamp-2 mb-3">${article.abstract || 'Нет аннотации'}</p>
+                                    <div class="flex items-center justify-between">
+                                        <span class="text-sm text-gray-500">${article.authors}</span>
+                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-sm font-medium">
+                                            ${article.rating && article.rating > 0 ? article.rating.toFixed(1) : 'Нет оценки'}
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                // Отображение в виде списка
+                resultsContainer.innerHTML = articles.map(article => `
+                    <div class="article-card bg-white rounded-xl shadow-md overflow-hidden mb-6 hover:shadow-lg transition duration-200 cursor-pointer"
+                         data-article='${JSON.stringify(article)}'>
+                        <div class="flex flex-col md:flex-row h-56">
+                            <div class="md:w-1/3 flex items-center justify-center">
+                                <img src="${article.preview_image || '/static/assets/default-article.jpg'}" 
+                                     alt="${article.title}" 
+                                     class="w-full h-full object-cover">
+                            </div>
+                            <div class="p-4 md:w-2/3 flex flex-col justify-between">
+                                <div>
+                                    <div class="flex items-center justify-between mb-2">
+                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+                                            ${translateCategory(article.category)}
+                                        </span>
+                                        <span class="text-xs text-gray-500">${article.date}</span>
+                                    </div>
+                                    <h3 class="text-lg font-bold mb-2 text-gray-800 line-clamp-2">${article.title}</h3>
+                                    <p class="text-gray-600 text-sm line-clamp-2 mb-3">${article.abstract || 'Нет аннотации'}</p>
+                                </div>
+                                <div class="flex items-center justify-between">
+                                    <span class="text-xs text-gray-500 truncate max-w-[60%]">${article.authors}</span>
+                                    <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">
+                                        ${article.rating && article.rating > 0 ? article.rating.toFixed(1) : 'Нет оценки'}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Добавляем обработчики кликов на карточки
+            document.querySelectorAll('.article-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const articleData = JSON.parse(this.dataset.article);
+                    window.showArticlePopup(articleData);
+                });
+            });
+        }
+
+        // Функция для выполнения ИИ-поиска
+        async function performAISearch() {
+            try {
+                const searchInput = document.getElementById('search-input');
+                const query = searchInput.value.trim();
+                
+                if (!query) {
+                    alert('Пожалуйста, введите поисковый запрос');
+                    return;
+                }
+                
+                // Получаем параметры фильтрации
+                const sortBy = document.querySelector('select[name="sort_by"]').value;
+                const sortOrder = document.querySelector('select[name="sort_order"]').value;
+                const category = document.querySelector('select[name="category"]').value;
+                const minRating = document.querySelector('input[name="min_rating"]').value;
+                const year = document.querySelector('select[name="year"]').value;
+                
+                // Показываем индикатор загрузки
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = `
+                    <div class="flex items-center justify-center py-12">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+                        <span class="ml-3 text-gray-600">ИИ анализирует запрос...</span>
+                    </div>
+                `;
+                
+                // Формируем URL с параметрами
+                const params = new URLSearchParams({
+                    query: query,
+                    sort_by: sortBy,
+                    sort_order: sortOrder
+                });
+                
+                if (category) params.append('category', category);
+                if (minRating) params.append('min_rating', minRating);
+                if (year) params.append('year', year);
+                
+                // Выполняем ИИ-поиск
+                const response = await fetch(`/api/search/ai?${params.toString()}`);
+                
+                if (!response.ok) {
+                    throw new Error('Ошибка при выполнении ИИ-поиска');
+                }
+                
+                const articles = await response.json();
+                displaySearchResults(articles);
+                
+            } catch (error) {
+                console.error('Ошибка ИИ-поиска:', error);
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = `
+                    <div class="text-center py-12">
+                        <h3 class="text-xl font-semibold text-gray-700 mb-2">
+                            Произошла ошибка при выполнении ИИ-поиска
+                        </h3>
+                        <p class="text-gray-600">Пожалуйста, попробуйте позже или используйте обычный поиск</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Функция для выполнения поиска по категории
+        async function performSearchByCategory(category) {
+            try {
+                console.log('=== ПОИСК ПО КАТЕГОРИИ ===');
+                console.log('Категория:', category);
+                
+                // Устанавливаем категорию в селект
+                const categorySelect = document.querySelector('select[name="category"]');
+                if (categorySelect) {
+                    categorySelect.value = category;
+                }
+                
+                // Выполняем поиск по фильтрам
+                await performSearchByFilters();
+                
+            } catch (error) {
+                console.error('Ошибка поиска по категории:', error);
+                console.error('Стек ошибки:', error.stack);
+                displaySearchResults([]);
+            }
+        }
+
+        // Функция для проверки всех статей в БД
+        async function checkAllArticles() {
+            try {
+                console.log('=== ПРОВЕРКА ВСЕХ СТАТЕЙ В БД ===');
+                
+                // Проверяем разные варианты API
+                const urls = [
+                    '/api/search/articles',
+                    '/api/articles',
+                    '/api/search',
+                    '/api/articles/search'
+                ];
+                
+                for (const url of urls) {
+                    console.log(`Пробуем URL: ${url}`);
+                    try {
+                        const response = await fetch(url);
+                        console.log(`URL ${url} - Статус: ${response.status}`);
+                        
+                        if (response.ok) {
+                            const articles = await response.json();
+                            console.log(`URL ${url} - Получено статей: ${articles.length}`);
+                            console.log(`URL ${url} - Данные:`, articles);
+                            
+                            if (articles.length > 0) {
+                                console.log(`Нашли работающий URL: ${url}`);
+                                break;
+                            }
+                        } else {
+                            const errorText = await response.text();
+                            console.log(`URL ${url} - Ошибка: ${errorText}`);
+                        }
+                    } catch (error) {
+                        console.log(`URL ${url} - Исключение:`, error.message);
+                    }
+                }
+                
+                // Основной запрос
+                const response = await fetch('/api/search/articles');
+                console.log('Основной запрос - Статус:', response.status);
+                console.log('Основной запрос - Headers:', response.headers);
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Ошибка получения статей:', response.status);
+                    console.error('Текст ошибки:', errorText);
+                    
+                    
+                    return;
+                }
+                
+                const articles = await response.json();
+                console.log('Всего статей в БД:', articles.length);
+                console.log('Полные данные статей:', articles);
+                
+                // Группируем по категориям
+                const categories = {};
+                articles.forEach(article => {
+                    const cat = article.category || 'Без категории';
+                    if (!categories[cat]) {
+                        categories[cat] = [];
+                    }
+                    categories[cat].push({
+                        id: article.id,
+                        title: article.title,
+                        rating: article.rating
+                    });
+                });
+                
+                console.log('Категории в БД:');
+                Object.keys(categories).forEach(cat => {
+                    console.log(`- "${cat}": ${categories[cat].length} статей`);
+                    categories[cat].forEach(article => {
+                        console.log(`  * ID ${article.id}: "${article.title}" (рейтинг: ${article.rating})`);
+                    });
+                });
+                
+                // Показываем в интерфейсе
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = `
+                    <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-blue-800 mb-4">Отладочная информация</h3>
+                        <p class="text-blue-700 mb-2">Всего статей в БД: <strong>${articles.length}</strong></p>
+                        <div class="space-y-2">
+                            ${Object.keys(categories).map(cat => `
+                                <div class="bg-white rounded p-3">
+                                    <h4 class="font-medium text-gray-800">"${cat}" - ${categories[cat].length} статей</h4>
+                                    <div class="text-sm text-gray-600 mt-1">
+                                        ${categories[cat].map(article => 
+                                            `ID ${article.id}: "${article.title}" (рейтинг: ${article.rating})`
+                                        ).join('<br>')}
+                                    </div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+                
+            } catch (error) {
+                console.error('Ошибка при проверке статей:', error);
+                console.error('Стек ошибки:', error.stack);
+                
+                // Показываем ошибку в интерфейсе
+                const resultsContainer = document.getElementById('search-results');
+                resultsContainer.innerHTML = `
+                    <div class="bg-red-50 border border-red-200 rounded-lg p-6 mb-6">
+                        <h3 class="text-lg font-semibold text-red-800 mb-4">Ошибка подключения</h3>
+                        <p class="text-red-700 mb-2">Сообщение: <strong>${error.message}</strong></p>
+                        <p class="text-red-700">Возможные причины:</p>
+                        <ul class="text-red-700 list-disc list-inside mt-2">
+                            <li>Сервер не запущен</li>
+                            <li>Неправильный URL</li>
+                            <li>Проблемы с сетью</li>
+                        </ul>
+                    </div>
+                `;
+            }
+        };
+
+        // Функция для перевода категорий с английского на русский
+        function translateCategory(englishCategory) {
+            const categoryMap = {
+                'biology': 'Биология',
+                'physics': 'Физика',
+                'chemistry': 'Химия',
+                'mathematics': 'Математика',
+                'computer-science': 'Информатика',
+                'medicine': 'Медицина',
+                'psychology': 'Психология',
+                'sociology': 'Социология',
+                'economics': 'Экономика',
+                'law': 'Право',
+                'philosophy': 'Философия',
+                'history': 'История',
+                'linguistics': 'Лингвистика',
+                'geography': 'География',
+                'astronomy': 'Астрономия',
+                'engineering': 'Инженерия',
+                'architecture': 'Архитектура',
+                'art': 'Искусство',
+                'literature': 'Литература',
+                'education': 'Образование',
+                'agriculture': 'Сельское хозяйство',
+                'environmental-science': 'Экология',
+                'materials-science': 'Материаловедение',
+                'neuroscience': 'Нейронаука',
+                'robotics': 'Робототехника',
+                'artificial-intelligence': 'Искусственный интеллект',
+                'data-science': 'Наука о данных'
+            };
+            
+            return categoryMap[englishCategory] || englishCategory;
+        }
+    </script>
+</body>
+</html>

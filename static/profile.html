@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank AI - Профиль пользователя</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+            border-radius: 40px;
+            margin-top: 10px;
+        }
+
+        .article-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .profile-header {
+            background: linear-gradient(135deg, #3a7bd5 0%, #2c5cb7 100%);
+        }
+        
+        .stat-card:hover {
+            transform: scale(1.02);
+        }
+        
+        .follow-btn {
+            transition: all 0.3s ease;
+        }
+        
+        .follow-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        .tab-button.active {
+            border-bottom: 3px solid #3a7bd5;
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header/Navigation -->
+        <header class="gradient-bg shadow-lg py-4">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <!-- Logo/Brand -->
+                    <div class="flex items-center mb-4 md:mb-0">
+                        <h1 class="text-2xl md:text-3xl font-bold text-white">Rank</h1>
+                        <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                            <span class="text-xl md:text-2xl font-light text-gray-800">AI</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                        <div class="relative flex items-center bg-white bg-opacity-40 rounded-full px-4 py-2">
+                            <input 
+                                type="text" 
+                                placeholder="Поиск научных статей..." 
+                                class="search-input w-full bg-transparent border-none text-white placeholder-white focus:ring-0 pl-2"
+                            >
+                            <button class="text-white ml-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- User Profile -->
+                    <div class="flex items-center space-x-4">
+                        <div class="relative group">
+                            <button class="flex items-center space-x-2">
+                                <div class="w-10 h-10 rounded-full bg-white flex items-center justify-center">
+                                    <i class="fas fa-user text-blue-600"></i>
+                                </div>
+                                <span class="text-white font-medium hidden md:inline">Иван Иванов</span>
+                                <i class="fas fa-chevron-down text-white text-xs"></i>
+                            </button>
+                            <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden group-hover:block">
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Профиль</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Настройки</a>
+                                <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Выйти</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="container mx-auto px-4 py-8">
+            <!-- Profile Header -->
+            <div class="profile-header rounded-xl shadow-md overflow-hidden mb-8">
+                <div class="p-8 text-white">
+                    <div class="flex flex-col md:flex-row items-start md:items-center justify-between">
+                        <div class="flex items-center mb-6 md:mb-0">
+                            <div class="w-24 h-24 rounded-full bg-white bg-opacity-20 flex items-center justify-center mr-6">
+                                <i class="fas fa-user text-white text-4xl"></i>
+                            </div>
+                            <div>
+                                <h1 class="text-3xl font-bold">Иван Иванов</h1>
+                                <p class="text-lg opacity-90">Профессор биологии, МГУ им. Ломоносова</p>
+                                <div class="flex items-center mt-2 space-x-4">
+                                    <span class="flex items-center">
+                                        <i class="fas fa-map-marker-alt mr-2"></i> Москва, Россия
+                                    </span>
+                                    <span class="flex items-center">
+                                        <i class="fas fa-calendar-alt mr-2"></i> На Rank AI с 2018
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end">
+                            <button class="follow-btn bg-white text-blue-600 px-6 py-2 rounded-lg font-semibold mb-4">
+                                <i class="fas fa-plus mr-2"></i> Подписаться
+                            </button>
+                            <div class="flex space-x-6 text-white text-center">
+                                <div>
+                                    <div class="text-2xl font-bold">156</div>
+                                    <div class="text-sm opacity-80">Подписчиков</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold">24</div>
+                                    <div class="text-sm opacity-80">Статей</div>
+                                </div>
+                                <div>
+                                    <div class="text-2xl font-bold">8.9</div>
+                                    <div class="text-sm opacity-80">Рейтинг</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Profile Navigation Tabs -->
+            <div class="bg-white rounded-xl shadow-md mb-8">
+                <div class="flex overflow-x-auto">
+                    <a href="#" data-tab="articles" class="tab-button active px-6 py-4 font-medium text-blue-600">Статьи</a>
+                    <a href="#" data-tab="ratings" class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600">Рейтинги</a>
+                    <a href="#" data-tab="followers" class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600">Подписчики</a>
+                    <a href="#" data-tab="following" class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600">Подписки</a>
+                    <a href="#" data-tab="about" class="tab-button px-6 py-4 font-medium text-gray-600 hover:text-blue-600">О себе</a>
+                </div>
+            </div>
+            
+            <!-- Profile Content -->
+            <div class="flex flex-col lg:flex-row gap-8">
+                <!-- Left Column (About) -->
+                <div class="w-full lg:w-1/3">
+                    <div class="bg-white rounded-xl shadow-md p-6 sticky top-4">
+                        <h2 class="text-xl font-bold mb-4">О профессоре</h2>
+                        <p class="text-gray-700 mb-6">
+                            Профессор биологического факультета МГУ. Специализация - морская экология и устойчивое рыболовство. 
+                            Автор более 50 научных работ в ведущих международных журналах. Руководитель исследовательских проектов 
+                            по изучению экосистем Баренцева моря.
+                        </p>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Образование</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-graduation-cap text-blue-500 mt-1 mr-3"></i>
+                                        <span>МГУ им. Ломоносова, доктор биологических наук (2005)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-graduation-cap text-blue-500 mt-1 mr-3"></i>
+                                        <span>МГУ им. Ломоносова, кандидат биологических наук (1998)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Контакты</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-envelope text-blue-500 mt-1 mr-3"></i>
+                                        <span>ivanov@university.edu</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-globe text-blue-500 mt-1 mr-3"></i>
+                                        <a href="#" class="text-blue-600 hover:underline">university.edu/ivanov</a>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Награды</h3>
+                                <ul class="space-y-2">
+                                    <li class="flex items-start">
+                                        <i class="fas fa-award text-blue-500 mt-1 mr-3"></i>
+                                        <span>Премия РАН за лучшую научную работу (2019)</span>
+                                    </li>
+                                    <li class="flex items-start">
+                                        <i class="fas fa-award text-blue-500 mt-1 mr-3"></i>
+                                        <span>Грант РФФИ (2016-2018)</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-gray-200">
+                                <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Экспертиза</h3>
+                                <div class="flex flex-wrap gap-2">
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">морская экология</span>
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">устойчивое рыболовство</span>
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">климатические изменения</span>
+                                    <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">биоразнообразие</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Right Column (Content Tabs) -->
+                <div class="flex-1">
+                    <!-- Articles Tab Content -->
+                    <div id="articles-tab" class="tab-content active">
+                        <!-- Articles Filter -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
+                                <h2 class="text-2xl font-bold">Научные статьи</h2>
+                                <div class="flex space-x-4 mt-4 md:mt-0">
+                                    <div class="relative">
+                                        <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option>Сортировать по</option>
+                                            <option>Дате публикации</option>
+                                            <option>Рейтингу</option>
+                                            <option>Просмотрам</option>
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                    <div class="relative">
+                                        <select class="appearance-none bg-white border border-gray-300 rounded-lg px-4 py-2 pr-8 focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                                            <option>Все категории</option>
+                                            <option>Биология</option>
+                                            <option>Экология</option>
+                                            <option>Рыболовство</option>
+                                        </select>
+                                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                                            <i class="fas fa-chevron-down text-xs"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Articles List -->
+                            <div class="space-y-6">
+                                <!-- Article 1 -->
+                                <div class="article-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex flex-col md:flex-row md:items-center">
+                                        <div class="w-full md:w-1/4 mb-4 md:mb-0 md:pr-6">
+                                            <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
+                                                <img src="https://via.placeholder.com/400x225" alt="Article preview" class="w-full h-full object-cover">
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h3 class="text-xl font-semibold">Новые методы в морской экологии</h3>
+                                                <div class="flex items-center bg-blue-50 px-3 py-1 rounded">
+                                                    <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                                    <span class="font-medium">8.7</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600 mb-3">Иван Иванов, Петр Петров • Опубликовано: 15.05.2023</p>
+                                            <p class="text-gray-700 mb-4">
+                                                Исследование новых методов мониторинга морских экосистем в условиях изменения климата. 
+                                                Представлены результаты пятилетнего исследования в Баренцевом море с использованием...
+                                            </p>
+                                            <div class="flex flex-wrap gap-2 mb-4">
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">экология</span>
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">биология</span>
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">климат</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <div class="flex space-x-4">
+                                                    <span class="text-gray-500 text-sm flex items-center">
+                                                        <i class="fas fa-eye mr-2"></i> 1.2K просмотров
+                                                    </span>
+                                                    <span class="text-gray-500 text-sm flex items-center">
+                                                        <i class="fas fa-download mr-2"></i> 456 скачиваний
+                                                    </span>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-blue-600 hover:text-blue-800">
+                                                        <i class="fas fa-bookmark"></i>
+                                                    </button>
+                                                    <button class="text-blue-600 hover:text-blue-800">
+                                                        <i class="fas fa-share-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Article 2 -->
+                                <div class="article-card bg-white border border-gray-200 rounded-lg p-6 shadow-sm hover:shadow-md transition">
+                                    <div class="flex flexocol md:flex-row md:items-center">
+                                        <div class="w-full md:w-1/4 mb-4 md:mb-0 md:pr-6">
+                                            <div class="aspect-w-16 aspect-h-9 bg-gray-100 rounded-lg overflow-hidden">
+                                                <img src="https://via.placeholder.com/400x225" alt="Article preview" class="w-full h-full object-cover">
+                                            </div>
+                                        </div>
+                                        <div class="flex-1">
+                                            <div class="flex justify-between items-start mb-2">
+                                                <h3 class="text-xl font-semibold">Устойчивое рыболовство в Баренцевом море</h3>
+                                                <div class="flex items-center bg-blue-50 px-3 py-1 rounded">
+                                                    <i class="fas fa-star text-yellow-400 text-sm mr-1"></i>
+                                                    <span class="font-medium">9.2</span>
+                                                </div>
+                                            </div>
+                                            <p class="text-gray-600 mb-3">Иван Иванов, Сергей Сергеев • Опубликовано: 10.03.2023</p>
+                                            <p class="text-gray-700 mb-4">
+                                                Анализ современных методов устойчивого рыболовства и их влияние на экосистему Баренцева моря. 
+                                                Предложена новая модель квотирования, позволяющая сохранить биоразнообразие...
+                                            </p>
+                                            <div class="flex flex-wrap gap-2 mb-4">
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">рыболовство</span>
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">экология</span>
+                                                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm">устойчивое развитие</span>
+                                            </div>
+                                            <div class="flex justify-between items-center">
+                                                <div class="flex space-x-4">
+                                                    <span class="text-gray-500 text-sm flex items-center">
+                                                        <i class="fas fa-eye mr-2"></i> 2.1K просмотров
+                                                    </span>
+                                                    <span class="text-gray-500 text-sm flex items-center">
+                                                        <i class="fas fa-download mr-2"></i> 789 скачиваний
+                                                    </span>
+                                                </div>
+                                                <div class="flex space-x-2">
+                                                    <button class="text-blue-600 hover:text-blue-800">
+                                                        <i class="fas fa-bookmark"></i>
+                                                    </button>
+                                                    <button class="text-blue-600 hover:text-blue-800">
+                                                        <i class="fas fa-share-alt"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Pagination -->
+                            <div class="flex justify-center mt-8">
+                                <nav class="inline-flex rounded-md shadow">
+                                    <a href="#" class="px-3 py-2 rounded-l-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                                        <i class="fas fa-chevron-left"></i>
+                                    </a>
+                                    <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-blue-600 font-medium">1</a>
+                                    <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">2</a>
+                                    <a href="#" class="px-4 py-2 border-t border-b border-gray-300 bg-white text-gray-500 hover:bg-gray-50">3</a>
+                                    <a href="#" class="px-3 py-2 rounded-r-md border border-gray-300 bg-white text-gray-500 hover:bg-gray-50">
+                                        <i class="fas fa-chevron-right"></i>
+                                    </a>
+                                </nav>
+                            </div>
+                        </div>
+                        
+                        <!-- Statistics Section -->
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold mb-6">Статистика публикаций</h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                                <div class="stat-card bg-blue-50 p-6 rounded-xl transition">
+                                    <div class="flex items-center mb-4">
+                                        <div class="p-3 bg-blue-100 rounded-full mr-4">
+                                            <i class="fas fa-chart-line text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Средний рейтинг</p>
+                                            <p class="text-2xl font-bold">8.9</p>
+                                        </div>
+                                    </div>
+                                    <div class="h-2 bg-blue-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-blue-600 rounded-full" style="width: 89%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-card bg-green-50 p-6 rounded-xl transition">
+                                    <div class="flex items-center mb-4">
+                                        <div class="p-3 bg-green-100 rounded-full mr-4">
+                                            <i class="fas fa-eye text-green-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Всего просмотров</p>
+                                            <p class="text-2xl font-bold">24.7K</p>
+                                        </div>
+                                    </div>
+                                    <div class="h-2 bg-green-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-green-600 rounded-full" style="width: 78%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div class="stat-card bg-purple-50 p-6 rounded-xl transition">
+                                    <div class="flex items-center mb-4">
+                                        <div class="p-3 bg-purple-100 rounded-full mr-4">
+                                            <i class="fas fa-download text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Всего скачиваний</p>
+                                            <p class="text-2xl font-bold">8.2K</p>
+                                        </div>
+                                    </div>
+                                    <div class="h-2 bg-purple-200 rounded-full overflow-hidden">
+                                        <div class="h-full bg-purple-600 rounded-full" style="width: 82%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-semibold mb-4">Цитирования по годам</h3>
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <div class="h-64">
+                                    <!-- Здесь будет график (заглушка) -->
+                                    <div class="w-full h-full flex items-center justify-center text-gray-400">
+                                        <i class="fas fa-chart-bar text-4xl"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Ratings Tab Content -->
+                    <div id="ratings-tab" class="tab-content">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold mb-6">Рейтинги и достижения</h2>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                                <div class="bg-blue-50 p-6 rounded-xl">
+                                    <div class="flex items-center mb-4">
+                                        <div class="p-3 bg-blue-100 rounded-full mr-4">
+                                            <i class="fas fa-trophy text-blue-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Общий рейтинг</p>
+                                            <p class="text-2xl font-bold">8.9</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        Профессор Иванов входит в топ-10% исследователей в области морской экологии по версии Rank AI.
+                                    </p>
+                                </div>
+                                
+                                <div class="bg-purple-50 p-6 rounded-xl">
+                                    <div class="flex items-center mb-4">
+                                        <div class="p-3 bg-purple-100 rounded-full mr-4">
+                                            <i class="fas fa-chart-pie text-purple-600"></i>
+                                        </div>
+                                        <div>
+                                            <p class="text-sm text-gray-600">Индекс Хирша</p>
+                                            <p class="text-2xl font-bold">24</p>
+                                        </div>
+                                    </div>
+                                    <p class="text-gray-700">
+                                        Высокий индекс цитирования свидетельствует о значительном влиянии работ профессора.
+                                    </p>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-semibold mb-4">Рейтинг по категориям</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Морская экология</span>
+                                        <span class="font-medium">9.2</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 92%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Устойчивое рыболовство</span>
+                                        <span class="font-medium">8.7</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 87%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Климатические изменения</span>
+                                        <span class="font-medium">8.1</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 81%"></div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <div class="flex justify-between mb-1">
+                                        <span class="text-gray-700">Биоразнообразие</span>
+                                        <span class="font-medium">7.9</span>
+                                    </div>
+                                    <div class="w-full bg-gray-200 rounded-full h-2.5">
+                                        <div class="bg-blue-600 h-2.5 rounded-full" style="width: 79%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-xl font-semibold mt-8 mb-4">Последние награды</h3>
+                            <div class="space-y-4">
+                                <div class="flex items-start p-4 bg-yellow-50 rounded-lg">
+                                    <div class="p-2 bg-yellow-100 rounded-full mr-4">
+                                        <i class="fas fa-award text-yellow-500"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Премия РАН за лучшую научную работу</h4>
+                                        <p class="text-gray-600 text-sm">2019 год</p>
+                                        <p class="text-gray-700 mt-1">За цикл работ по морской экологии Баренцева моря</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex items-start p-4 bg-blue-50 rounded-lg">
+                                    <div class="p-2 bg-blue-100 rounded-full mr-4">
+                                        <i class="fas fa-medal text-blue-500"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Грант РФФИ</h4>
+                                        <p class="text-gray-600 text-sm">2016-2018 годы</p>
+                                        <p class="text-gray-700 mt-1">Исследование влияния климатических изменений на морские экосистемы</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Followers Tab Content -->
+                    <div id="followers-tab" class="tab-content">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold">156 подписчиков</h2>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Поиск подписчиков..." 
+                                        class="border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Follower 1 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Петр Петров</h4>
+                                        <p class="text-gray-600 text-sm">Доцент, МГУ</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Follower 2 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Анна Смирнова</h4>
+                                        <p class="text-gray-600 text-sm">Профессор, СПбГУ</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Follower 3 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Сергей Сергеев</h4>
+                                        <p class="text-gray-600 text-sm">Научный сотрудник, ИО РАН</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Follower 4 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Мария Иванова</h4>
+                                        <p class="text-gray-600 text-sm">Аспирант, МГУ</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Follower 5 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Алексей Алексеев</h4>
+                                        <p class="text-gray-600 text-sm">Профессор, КФУ</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Follower 6 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Елена Еленова</h4>
+                                        <p class="text-gray-600 text-sm">Доцент, НГУ</p>
+                                    </div>
+                                    <button class="ml-auto text-blue-600 hover:text-blue-800">
+                                        <i class="fas fa-user-plus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center mt-8">
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-blue-600 hover:bg-blue-50 transition">
+                                    Показать еще
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Following Tab Content -->
+                    <div id="following-tab" class="tab-content">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="text-2xl font-bold">87 подписок</h2>
+                                <div class="relative">
+                                    <input 
+                                        type="text" 
+                                        placeholder="Поиск подписок..." 
+                                        class="border border-gray-300 rounded-lg px-4 py-2 pl-10 focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    >
+                                    <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                                </div>
+                            </div>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <!-- Following 1 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-blue-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Институт океанологии РАН</h4>
+                                        <p class="text-gray-600 text-sm">Научная организация</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Following 2 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-green-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Журнал "Морская биология"</h4>
+                                        <p class="text-gray-600 text-sm">Научный журнал</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Following 3 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-purple-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Михаил Михайлов</h4>
+                                        <p class="text-gray-600 text-sm">Профессор, ДВФУ</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Following 4 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-yellow-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Конференция по экологии</h4>
+                                        <p class="text-gray-600 text-sm">Мероприятие</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Following 5 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-red-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Александр Александров</h4>
+                                        <p class="text-gray-600 text-sm">Доцент, МГУ</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                                
+                                <!-- Following 6 -->
+                                <div class="flex items-center p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition">
+                                    <div class="w-12 h-12 rounded-full bg-indigo-100 flex items-center justify-center mr-4">
+                                        <i class="fas fa-user text-indigo-600"></i>
+                                    </div>
+                                    <div>
+                                        <h4 class="font-semibold">Проект "Чистые моря"</h4>
+                                        <p class="text-gray-600 text-sm">Экологический проект</p>
+                                    </div>
+                                    <button class="ml-auto text-red-600 hover:text-red-800">
+                                        <i class="fas fa-user-minus"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="flex justify-center mt-8">
+                                <button class="px-4 py-2 border border-gray-300 rounded-lg text-blue-600 hover:bg-blue-50 transition">
+                                    Показать еще
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- About Tab Content -->
+                    <div id="about-tab" class="tab-content">
+                        <div class="bg-white rounded-xl shadow-md p-6 mb-6">
+                            <h2 class="text-2xl font-bold mb-6">Подробная информация</h2>
+                            
+                            <div class="space-y-6">
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">Биография</h3>
+                                    <div class="prose max-w-none text-gray-700">
+                                        <p>
+                                            Профессор Иван Иванович Иванов родился 15 марта 1970 года в Москве. 
+                                            В 1992 году с отличием окончил биологический факультет МГУ им. М.В. Ломоносова.
+                                        </p>
+                                        <p class="mt-3">
+                                            В 1998 году защитил кандидатскую диссертацию на тему "Экология прибрежных вод Баренцева моря". 
+                                            Докторскую диссертацию защитил в 2005 году по теме "Устойчивое рыболовство в условиях климатических изменений".
+                                        </p>
+                                        <p class="mt-3">
+                                            С 2006 года - профессор кафедры гидробиологии биологического факультета МГУ. 
+                                            Руководитель научно-исследовательской лаборатории морских экосистем.
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">Научные интересы</h3>
+                                    <ul class="list-disc pl-5 space-y-2 text-gray-700">
+                                        <li>Морская экология и биоразнообразие</li>
+                                        <li>Устойчивое рыболовство и управление морскими ресурсами</li>
+                                        <li>Влияние климатических изменений на морские экосистемы</li>
+                                        <li>Методы мониторинга морской среды</li>
+                                        <li>Экологическое моделирование</li>
+                                    </ul>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">Профессиональная деятельность</h3>
+                                    <div class="space-y-4">
+                                        <div class="border-l-4 border-blue-500 pl-4 py-1">
+                                            <h4 class="font-medium">Профессор кафедры гидробиологии</h4>
+                                            <p class="text-gray-600 text-sm">МГУ им. М.В. Ломоносова • 2006 - настоящее время</p>
+                                            <p class="text-gray-700 mt-1">Чтение лекций, руководство научными проектами, подготовка аспирантов.</p>
+                                        </div>
+                                        
+                                        <div class="border-l-4 border-green-500 pl-4 py-1">
+                                            <h4 class="font-medium">Научный руководитель</h4>
+                                            <p class="text-gray-600 text-sm">Лаборатория морских экосистем • 2010 - настоящее время</p>
+                                            <p class="text-gray-700 mt-1">Организация и проведение морских экспедиций, публикация научных статей.</p>
+                                        </div>
+                                        
+                                        <div class="border-l-4 border-purple-500 pl-4 py-1">
+                                            <h4 class="font-medium">Член редколлегии</h4>
+                                            <p class="text-gray-600 text-sm">Журнал "Морская биология" • 2015 - настоящее время</p>
+                                            <p class="text-gray-700 mt-1">Рецензирование научных статей, участие в редакционной политике.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div>
+                                    <h3 class="text-lg font-semibold mb-3">Ключевые публикации</h3>
+                                    <div class="space-y-3">
+                                        <div class="p-3 bg-gray-50 rounded-lg">
+                                            <h4 class="font-medium">"Новые методы мониторинга морских экосистем"</h4>
+                                            <p class="text-gray-600 text-sm">Journal of Marine Biology, 2023</p>
+                                            <p class="text-gray-700 text-sm mt-1">Иванов И.И., Петров П.П., Сергеев С.С.</p>
+                                        </div>
+                                        
+                                        <div class="p-3 bg-gray-50 rounded-lg">
+                                            <h4 class="font-medium">"Устойчивое рыболовство в условиях изменения климата"</h4>
+                                            <p class="text-gray-600 text-sm">Marine Ecology Progress Series, 2021</p>
+                                            <p class="text-gray-700 text-sm mt-1">Иванов И.И., Михайлов М.М.</p>
+                                        </div>
+                                        
+                                        <div class="p-3 bg-gray-50 rounded-lg">
+                                            <h4 class="font-medium">"Экология Баренцева моря: 20 лет исследований"</h4>
+                                            <p class="text-gray-600 text-sm">Oceanography, 2019</p>
+                                            <p class="text-gray-700 text-sm mt-1">Иванов И.И. и др.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#f5f5f0] text-gray-800 py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between gap-8">
+                    <!-- Brand section -->
+                    <div class="max-w-xs">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-900">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-[#2563eb] rounded-md">
+                                <span class="text-xl font-light text-white">AI</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">
+                            Система ранжирования научных статей с использованием искусственного интеллекта для исследователей и академиков.
+                        </p>
+                        <div class="mt-6 flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Навигация</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Главная</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Статьи</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Рейтинги</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>О проекте</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ресурсы</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Блог</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Документация</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>API</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Поддержка</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">contact@rankai.ru</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-phone mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">+7 (XXX) XXX-XX-XX</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">Москва, Россия</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 mb-4 md:mb-0 text-sm">
+                        © 2023 Rank AI. Все права защищены.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Политика конфиденциальности</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Условия использования</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Cookie</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Tab switching functionality
+        const tabButtons = document.querySelectorAll('.tab-button');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                // Get the target tab ID from data attribute
+                const targetTab = this.getAttribute('data-tab');
+                
+                // Remove active class from all buttons
+                tabButtons.forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // Hide all tab contents
+                tabContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Show the target tab content
+                document.getElementById(`${targetTab}-tab`).classList.add('active');
+            });
+        });
+        
+        // Follow button functionality
+        const followBtn = document.querySelector('.follow-btn');
+        
+        followBtn.addEventListener('click', function() {
+            if (this.textContent.includes('Подписаться')) {
+                this.innerHTML = '<i class="fas fa-check mr-2"></i> Подписаны';
+                this.classList.remove('bg-white');
+                this.classList.add('bg-green-500', 'text-white');
+            } else {
+                this.innerHTML = '<i class="fas fa-plus mr-2"></i> Подписаться';
+                this.classList.add('bg-white');
+                this.classList.remove('bg-green-500', 'text-white');
+            }
+        });
+        
+        // Article interaction functionality
+        const articleCards = document.querySelectorAll('.article-card');
+        
+        articleCards.forEach(card => {
+            const bookmarkBtn = card.querySelector('.fa-bookmark').parentElement;
+            const shareBtn = card.querySelector('.fa-share-alt').parentElement;
+            
+            bookmarkBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                if (this.classList.contains('text-blue-600')) {
+                    this.classList.remove('text-blue-600');
+                    this.classList.add('text-yellow-500');
+                } else {
+                    this.classList.add('text-blue-600');
+                    this.classList.remove('text-yellow-500');
+                }
+            });
+            
+            shareBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                alert('Поделиться статьей: ' + card.querySelector('h3').textContent);
+            });
+            
+            card.addEventListener('click', function() {
+                // Here you would typically navigate to the article page
+                console.log('Viewing article: ' + this.querySelector('h3').textContent);
+            });
+        });
+    </script>
+</body>
+</html>

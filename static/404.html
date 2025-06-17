@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank AI - Страница не найдена</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            margin: 0;
+            overflow-x: hidden;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            flex: 1;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+            border-radius: 40px;
+            margin-top: 10px;
+        }
+
+        .error-container {
+            background: linear-gradient(135deg, rgba(69, 151, 236, 0.1) 0%, rgba(58, 123, 213, 0.1) 100%);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(69, 151, 236, 0.3);
+        }
+
+        /* Snake Game Styles */
+        #game-container {
+            margin: 2rem auto;
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        #game-board {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            aspect-ratio: 1/1;
+        }
+        
+        #game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            opacity: 0;
+            transition: opacity 0.3s;
+            pointer-events: none;
+        }
+        
+        #game-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .game-controls {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .game-btn {
+            background: #3a7bd5;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        
+        .game-btn:hover {
+            background: #2c5fb3;
+        }
+        
+        .mobile-controls-container {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 1rem;
+            padding-bottom: 1rem;
+        }
+        
+        .mobile-controls {
+            display: none;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 5px;
+            width: 150px;
+            height: 150px;
+        }
+        
+        .mobile-btn {
+            background: rgba(58, 123, 213, 0.2);
+            border: none;
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.5rem;
+            color: #3a7bd5;
+            touch-action: manipulation;
+        }
+        
+        .mobile-btn:active {
+            background: rgba(58, 123, 213, 0.4);
+        }
+        
+        .controls-info {
+            background: rgba(58, 123, 213, 0.1);
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 1rem;
+            text-align: center;
+        }
+        
+        .controls-info p {
+            margin-bottom: 8px;
+            color: #333;
+        }
+        
+        .controls-info kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 1px 1px rgba(0,0,0,0.1);
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 0 2px;
+        }
+        
+        @media (max-width: 768px) {
+            .mobile-controls {
+                display: grid;
+            }
+            
+            .footer-content {
+                flex-direction: column;
+                gap: 2rem;
+            }
+            
+            .footer-links {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header/Navigation -->
+        <header class="gradient-bg shadow-lg py-4">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col md:flex-row items-center justify-between">
+                    <!-- Logo/Brand -->
+                    <a href="/index.html"><div class="flex items-center mb-4 md:mb-0">
+                        <h1 class="text-2xl md:text-3xl font-bold text-white">Rank</h1>
+                        <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                            <span class="text-xl md:text-2xl font-light text-gray-800">AI</span>
+                        </div>
+                    </div>
+                    </a>
+                    
+                    <!-- Search Bar -->
+                    <div class="w-full md:w-1/2 lg:w-2/5 mb-4 md:mb-0">
+                        <div class="relative flex items-center bg-white bg-opacity-40 rounded-full px-4 py-2">
+                            <input 
+                                type="text" 
+                                placeholder="Поиск научных статей..." 
+                                class="search-input w-full bg-transparent border-none text-white placeholder-white focus:ring-0 pl-2"
+                            >
+                            <button class="text-white ml-2">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Auth Buttons -->
+                    <div class="flex items-center space-x-4">
+                        <button id="login-btn" class="bg-white text-gray-800 font-medium px-6 py-2 rounded-full hover:bg-gray-100 transition">
+                            Войти
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 404 Content -->
+        <main class="container mx-auto px-4 py-8">
+            <div class="error-container rounded-3xl p-8 md:p-12 text-center">
+                <div class="max-w-2xl mx-auto">
+                    <div class="text-9xl font-bold text-blue-600 mb-6">404</div>
+                    <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Страница не найдена</h1>
+                    <p class="text-lg text-gray-600 mb-8">
+                        К сожалению, запрашиваемая вами страница не существует или была перемещена. 
+                        Возможно, вы ошиблись в адресе или страница была удалена.
+                        <br><br>
+                        Однако здесь Вы можете поиграть в змейку!
+                    </p>
+                    
+                    <!-- Snake Game -->
+                    <div id="game-container">
+                        <canvas id="game-board"></canvas>
+                        <div id="game-overlay">
+                            <h2 class="text-2xl font-bold mb-2">Игра окончена!</h2>
+                            <p id="final-score" class="mb-4">Ваш счет: 0</p>
+                            <div class="game-controls">
+                                <button id="restart-btn" class="game-btn">Играть снова</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Controls Info -->
+                    <div class="controls-info">
+                        <p class="font-medium">Управление змейкой:</p>
+                        <p>Стрелки <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> или <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></p>
+                        <p class="text-sm text-gray-500 mt-2">На мобильных устройствах используйте кнопки ниже</p>
+                    </div>
+                    
+                    <!-- Mobile Controls (hidden on desktop) -->
+                    <div class="mobile-controls-container">
+                        <div class="mobile-controls">
+                            <div></div>
+                            <button class="mobile-btn" id="up-btn"><i class="fas fa-arrow-up"></i></button>
+                            <div></div>
+                            <button class="mobile-btn" id="left-btn"><i class="fas fa-arrow-left"></i></button>
+                            <div></div>
+                            <button class="mobile-btn" id="right-btn"><i class="fas fa-arrow-right"></i></button>
+                            <div></div>
+                            <button class="mobile-btn" id="down-btn"><i class="fas fa-arrow-down"></i></button>
+                            <div></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-8 flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="/" class="bg-blue-600 hover:bg-blue-700 text-white font-medium px-6 py-3 rounded-lg transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-home mr-2"></i> На главную
+                        </a>
+                        <a href="#" class="bg-white hover:bg-gray-100 text-gray-800 font-medium px-6 py-3 rounded-lg border border-gray-300 transition duration-200 flex items-center justify-center">
+                            <i class="fas fa-search mr-2"></i> Поиск статей
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-[#f5f5f0] text-gray-800 py-12">
+            <div class="container mx-auto px-4">
+                <div class="flex flex-col lg:flex-row justify-between gap-8 footer-content">
+                    <!-- Brand section -->
+                    <div class="max-w-xs">
+                        <div class="flex items-center mb-4">
+                            <h1 class="text-2xl font-bold text-gray-900">Rank</h1>
+                            <div class="ml-2 px-2 py-1 bg-[#2563eb] rounded-md">
+                                <span class="text-xl font-light text-white">AI</span>
+                            </div>
+                        </div>
+                        <p class="text-gray-600">
+                            Система ранжирования научных статей с использованием искусственного интеллекта для исследователей и академиков.
+                        </p>
+                        <div class="mt-6 flex space-x-4">
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-twitter text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-facebook text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-linkedin text-xl"></i>
+                            </a>
+                            <a href="#" class="text-gray-500 hover:text-[#2563eb] transition">
+                                <i class="fab fa-github text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Links grid -->
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-8 footer-links">
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Навигация</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Главная</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Статьи</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Рейтинги</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>О проекте</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ресурсы</h3>
+                            <ul class="space-y-3">
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Блог</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Документация</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>API</a></li>
+                                <li><a href="#" class="text-gray-600 hover:text-[#2563eb] transition flex items-center">
+                                    <i class="fas fa-chevron-right text-xs mr-2 text-[#2563eb]"></i>Поддержка</a></li>
+                            </ul>
+                        </div>
+                        
+                        <div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-4">Контакты</h3>
+                            <ul class="space-y-3">
+                                <li class="flex items-start">
+                                    <i class="fas fa-envelope mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">contact@rankai.ru</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-phone mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">+7 (XXX) XXX-XX-XX</span>
+                                </li>
+                                <li class="flex items-start">
+                                    <i class="fas fa-map-marker-alt mt-1 mr-3 text-[#2563eb]"></i>
+                                    <span class="text-gray-600">Москва, Россия</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="border-t border-gray-300 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 mb-4 md:mb-0 text-sm">
+                        © 2023 Rank AI. Все права защищены.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Политика конфиденциальности</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Условия использования</a>
+                        <a href="#" class="text-gray-500 hover:text-[#2563eb] transition text-sm">Cookie</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Simple search functionality
+        document.querySelector('.fa-search').addEventListener('click', function() {
+            const searchTerm = document.querySelector('.search-input').value;
+            if(searchTerm.trim() !== '') {
+                alert(`Вы ищете: ${searchTerm}`);
+                // In a real app, you would make an API call here
+            }
+        });
+
+        // Allow search on Enter key press
+        document.querySelector('.search-input').addEventListener('keypress', function(e) {
+            if(e.key === 'Enter') {
+                const searchTerm = document.querySelector('.search-input').value;
+                if(searchTerm.trim() !== '') {
+                    alert(`Вы ищете: ${searchTerm}`);
+                    // In a real app, you would make an API call here
+                }
+            }
+        });
+
+        // Login popup functionality
+        const loginPopup = document.getElementById('login-popup');
+        const loginBtn = document.getElementById('login-btn');
+        
+        if (loginBtn) {
+            loginBtn.addEventListener('click', function() {
+                if (loginPopup) {
+                    loginPopup.classList.add('active');
+                } else {
+                    window.location.href = '/login';
+                }
+            });
+        }
+
+        // Snake Game Implementation
+        document.addEventListener('DOMContentLoaded', () => {
+            const canvas = document.getElementById('game-board');
+            const ctx = canvas.getContext('2d');
+            const gameOverlay = document.getElementById('game-overlay');
+            const restartBtn = document.getElementById('restart-btn');
+            const finalScore = document.getElementById('final-score');
+            
+            // Mobile controls
+            const upBtn = document.getElementById('up-btn');
+            const downBtn = document.getElementById('down-btn');
+            const leftBtn = document.getElementById('left-btn');
+            const rightBtn = document.getElementById('right-btn');
+            
+            // Set canvas size
+            function resizeCanvas() {
+                const size = Math.min(500, window.innerWidth - 40);
+                canvas.width = size;
+                canvas.height = size;
+            }
+            
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+            
+            // Game variables
+            const gridSize = 20;
+            let cellSize = canvas.width / gridSize;
+            let snake = [];
+            let food = {};
+            let direction = 'right';
+            let nextDirection = 'right';
+            let gameSpeed = 150;
+            let score = 0;
+            let gameLoop;
+            let gameStarted = false;
+            let lastRenderTime = 0;
+            let accumulatedTime = 0;
+            
+            // Initialize game
+            function initGame() {
+                snake = [
+                    {x: 5, y: 10},
+                    {x: 4, y: 10},
+                    {x: 3, y: 10}
+                ];
+                
+                direction = 'right';
+                nextDirection = 'right';
+                score = 0;
+                gameSpeed = 150;
+                accumulatedTime = 0;
+                
+                placeFood();
+                gameOverlay.classList.remove('active');
+                gameStarted = true;
+                
+                if (gameLoop) cancelAnimationFrame(gameLoop);
+                lastRenderTime = performance.now();
+                gameLoop = requestAnimationFrame(gameStep);
+            }
+            
+            // Place food at random position
+            function placeFood() {
+                food = {
+                    x: Math.floor(Math.random() * gridSize),
+                    y: Math.floor(Math.random() * gridSize)
+                };
+                
+                // Make sure food doesn't appear on snake
+                for (let segment of snake) {
+                    if (segment.x === food.x && segment.y === food.y) {
+                        return placeFood();
+                    }
+                }
+            }
+            
+            // Main game loop using requestAnimationFrame for smoother animation
+            function gameStep(currentTime) {
+                if (!lastRenderTime) lastRenderTime = currentTime;
+                const deltaTime = currentTime - lastRenderTime;
+                lastRenderTime = currentTime;
+                accumulatedTime += deltaTime;
+                
+                // Only update game state at fixed intervals
+                while (accumulatedTime >= gameSpeed) {
+                    updateGame();
+                    accumulatedTime -= gameSpeed;
+                }
+                
+                // Always render the current state
+                draw();
+                
+                // Continue the game loop
+                gameLoop = requestAnimationFrame(gameStep);
+            }
+            
+            // Update game state
+            function updateGame() {
+                // Update direction
+                direction = nextDirection;
+                
+                // Move snake
+                const head = {...snake[0]};
+                
+                switch (direction) {
+                    case 'up':
+                        head.y--;
+                        break;
+                    case 'down':
+                        head.y++;
+                        break;
+                    case 'left':
+                        head.x--;
+                        break;
+                    case 'right':
+                        head.x++;
+                        break;
+                }
+                
+                // Check for collisions
+                if (
+                    head.x < 0 || head.x >= gridSize ||
+                    head.y < 0 || head.y >= gridSize ||
+                    snake.some(segment => segment.x === head.x && segment.y === head.y)
+                ) {
+                    gameOver();
+                    return;
+                }
+                
+                // Add new head
+                snake.unshift(head);
+                
+                // Check if snake ate food
+                if (head.x === food.x && head.y === food.y) {
+                    score++;
+                    placeFood();
+                    
+                    // Increase speed every 5 points
+                    if (score % 5 === 0) {
+                        gameSpeed = Math.max(50, gameSpeed - 10);
+                    }
+                } else {
+                    // Remove tail if no food eaten
+                    snake.pop();
+                }
+            }
+            
+            // Draw game state
+            function draw() {
+                // Recalculate cell size in case canvas was resized
+                cellSize = canvas.width / gridSize;
+                
+                // Clear canvas
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw grid (optional)
+                ctx.strokeStyle = '#f0f0f0';
+                ctx.lineWidth = 0.5;
+                for (let i = 0; i < gridSize; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(i * cellSize, 0);
+                    ctx.lineTo(i * cellSize, canvas.height);
+                    ctx.stroke();
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(0, i * cellSize);
+                    ctx.lineTo(canvas.width, i * cellSize);
+                    ctx.stroke();
+                }
+                
+                // Draw snake
+                ctx.fillStyle = '#3a7bd5';
+                for (let segment of snake) {
+                    ctx.fillRect(
+                        segment.x * cellSize,
+                        segment.y * cellSize,
+                        cellSize,
+                        cellSize
+                    );
+                    
+                    // Add some styling to make snake segments look rounded
+                    ctx.strokeStyle = '#2c5fb3';
+                    ctx.lineWidth = 2;
+                    ctx.strokeRect(
+                        segment.x * cellSize + 1,
+                        segment.y * cellSize + 1,
+                        cellSize - 2,
+                        cellSize - 2
+                    );
+                }
+                
+                // Draw head differently
+                const head = snake[0];
+                ctx.fillStyle = '#2563eb';
+                ctx.fillRect(
+                    head.x * cellSize,
+                    head.y * cellSize,
+                    cellSize,
+                    cellSize
+                );
+                
+                // Draw eyes on head
+                ctx.fillStyle = 'white';
+                const eyeSize = cellSize / 5;
+                
+                // Eye positions based on direction
+                let leftEyeX, leftEyeY, rightEyeX, rightEyeY;
+                
+                switch (direction) {
+                    case 'up':
+                        leftEyeX = head.x * cellSize + cellSize / 3;
+                        leftEyeY = head.y * cellSize + cellSize / 4;
+                        rightEyeX = head.x * cellSize + (cellSize * 2) / 3;
+                        rightEyeY = head.y * cellSize + cellSize / 4;
+                        break;
+                    case 'down':
+                        leftEyeX = head.x * cellSize + cellSize / 3;
+                        leftEyeY = head.y * cellSize + (cellSize * 3) / 4;
+                        rightEyeX = head.x * cellSize + (cellSize * 2) / 3;
+                        rightEyeY = head.y * cellSize + (cellSize * 3) / 4;
+                        break;
+                    case 'left':
+                        leftEyeX = head.x * cellSize + cellSize / 4;
+                        leftEyeY = head.y * cellSize + cellSize / 3;
+                        rightEyeX = head.x * cellSize + cellSize / 4;
+                        rightEyeY = head.y * cellSize + (cellSize * 2) / 3;
+                        break;
+                    case 'right':
+                        leftEyeX = head.x * cellSize + (cellSize * 3) / 4;
+                        leftEyeY = head.y * cellSize + cellSize / 3;
+                        rightEyeX = head.x * cellSize + (cellSize * 3) / 4;
+                        rightEyeY = head.y * cellSize + (cellSize * 2) / 3;
+                        break;
+                }
+                
+                ctx.beginPath();
+                ctx.arc(leftEyeX, leftEyeY, eyeSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.beginPath();
+                ctx.arc(rightEyeX, rightEyeY, eyeSize, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Draw food
+                ctx.fillStyle = '#e74c3c';
+                ctx.beginPath();
+                ctx.arc(
+                    food.x * cellSize + cellSize / 2,
+                    food.y * cellSize + cellSize / 2,
+                    cellSize / 2 - 2,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                // Add some styling to food
+                ctx.fillStyle = '#c0392b';
+                ctx.beginPath();
+                ctx.arc(
+                    food.x * cellSize + cellSize / 2,
+                    food.y * cellSize + cellSize / 3,
+                    cellSize / 8,
+                    0,
+                    Math.PI * 2
+                );
+                ctx.fill();
+                
+                // Draw score
+                ctx.fillStyle = '#333';
+                ctx.font = '16px Montserrat';
+                ctx.textAlign = 'left';
+                ctx.fillText(`Счет: ${score}`, 10, 20);
+            }
+            
+            // Game over
+            function gameOver() {
+                cancelAnimationFrame(gameLoop);
+                gameStarted = false;
+                finalScore.textContent = `Ваш счет: ${score}`;
+                gameOverlay.classList.add('active');
+            }
+            
+            // Keyboard controls
+            document.addEventListener('keydown', (e) => {
+                if (!gameStarted) return;
+                
+                switch (e.key) {
+                    case 'ArrowUp':
+                    case 'w':
+                    case 'W':
+                    case 'Ц':
+                    case 'ц':
+                        if (direction !== 'down') nextDirection = 'up';
+                        break;
+                    case 'ArrowDown':
+                    case 's':
+                    case 'S':
+                    case 'Ы':
+                    case 'ы':
+                        if (direction !== 'up') nextDirection = 'down';
+                        break;
+                    case 'ArrowLeft':
+                    case 'a':
+                    case 'A':
+                    case 'Ф':
+                    case 'ф':
+                        if (direction !== 'right') nextDirection = 'left';
+                        break;
+                    case 'ArrowRight':
+                    case 'd':
+                    case 'D':
+                    case 'В':
+                    case 'в':
+                        if (direction !== 'left') nextDirection = 'right';
+                        break;
+                }
+            });
+            
+            // Mobile controls
+            upBtn.addEventListener('click', () => {
+                if (direction !== 'down') nextDirection = 'up';
+            });
+            
+            downBtn.addEventListener('click', () => {
+                if (direction !== 'up') nextDirection = 'down';
+            });
+            
+            leftBtn.addEventListener('click', () => {
+                if (direction !== 'right') nextDirection = 'left';
+            });
+            
+            rightBtn.addEventListener('click', () => {
+                if (direction !== 'left') nextDirection = 'right';
+            });
+            
+            // Prevent default touch behavior for mobile buttons
+            [upBtn, downBtn, leftBtn, rightBtn].forEach(btn => {
+                btn.addEventListener('touchstart', (e) => {
+                    e.preventDefault();
+                }, { passive: false });
+            });
+            
+            // Restart game
+            restartBtn.addEventListener('click', initGame);
+            
+            // Start game when user interacts with the page
+            document.addEventListener('click', () => {
+                if (!gameStarted) {
+                    initGame();
+                }
+            }, { once: true });
+            
+            // Initial draw
+            draw();
+        });
+    </script>
+</body>
+</html>

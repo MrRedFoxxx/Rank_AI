@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rank AI - Административная панель</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f5f5f0;
+        }
+
+        .main-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            min-height: 100vh;
+        }
+
+        .gradient-bg {
+            background: linear-gradient(135deg, #4597ec 0%, #3a7bd5 100%);
+        }
+
+        .sidebar-item:hover {
+            background-color: rgba(69, 151, 236, 0.1);
+        }
+        
+        .sidebar-item.active {
+            background-color: rgba(69, 151, 236, 0.2);
+            border-left: 4px solid #3a7bd5;
+        }
+
+        .content-section {
+            display: none;
+        }
+        
+        .content-section.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Table styles */
+        .admin-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .admin-table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .admin-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .admin-table tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 2rem;
+            border-radius: 0.5rem;
+            width: 100%;
+            max-width: 500px;
+            position: relative;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="gradient-bg shadow-lg py-4">
+            <div class="container mx-auto px-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <h1 class="text-2xl font-bold text-white">Rank</h1>
+                        <div class="ml-2 px-2 py-1 bg-white rounded-md">
+                            <span class="text-xl font-light text-gray-800">AI</span>
+                        </div>
+                        <span class="ml-4 text-white opacity-80">Административная панель</span>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button id="admin-profile" class="flex items-center space-x-2 text-white">
+                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center">
+                                <i class="fas fa-user text-blue-600"></i>
+                            </div>
+                            <span class="font-medium">Администратор</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <div class="flex">
+            <!-- Sidebar -->
+            <div class="w-64 bg-white h-screen shadow-lg">
+                <nav class="p-4">
+                    <div class="space-y-2">
+                        <a href="#" class="sidebar-item active block px-4 py-2 rounded-lg" data-section="dashboard">
+                            <i class="fas fa-chart-line mr-3 text-blue-600"></i>
+                            Дашборд
+                        </a>
+                        <a href="#" class="sidebar-item block px-4 py-2 rounded-lg" data-section="users">
+                            <i class="fas fa-users mr-3 text-blue-600"></i>
+                            Пользователи
+                        </a>
+                        <a href="#" class="sidebar-item block px-4 py-2 rounded-lg" data-section="articles">
+                            <i class="fas fa-book mr-3 text-blue-600"></i>
+                            Статьи
+                        </a>
+                        <a href="#" class="sidebar-item block px-4 py-2 rounded-lg" data-section="settings">
+                            <i class="fas fa-cog mr-3 text-blue-600"></i>
+                            Настройки
+                        </a>
+                        <a href="#" class="sidebar-item block px-4 py-2 rounded-lg text-red-600" id="logout-btn">
+                            <i class="fas fa-sign-out-alt mr-3"></i>
+                            Выйти
+                        </a>
+                    </div>
+                </nav>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="flex-1 p-8">
+                <!-- Dashboard Section -->
+                <div id="dashboard-section" class="content-section active">
+                    <h2 class="text-2xl font-bold mb-6">Дашборд</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                        <div class="bg-white rounded-xl p-6 shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Всего пользователей</p>
+                                    <h3 class="text-2xl font-bold mt-1" id="total-users">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-users text-blue-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Всего статей</p>
+                                    <h3 class="text-2xl font-bold mt-1" id="total-articles">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-book text-green-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Новых за месяц</p>
+                                    <h3 class="text-2xl font-bold mt-1" id="new-users">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-user-plus text-purple-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="bg-white rounded-xl p-6 shadow-md">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-gray-600 text-sm">Активных сессий</p>
+                                    <h3 class="text-2xl font-bold mt-1" id="active-sessions">0</h3>
+                                </div>
+                                <div class="w-12 h-12 bg-yellow-100 rounded-full flex items-center justify-center">
+                                    <i class="fas fa-clock text-yellow-600 text-xl"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Users Section -->
+                <div id="users-section" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Пользователи</h2>
+                        <button id="add-user-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-plus mr-2"></i>Добавить пользователя
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Имя</th>
+                                        <th>Email</th>
+                                        <th>Роль</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <!-- Users will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Articles Section -->
+                <div id="articles-section" class="content-section">
+                    <div class="flex justify-between items-center mb-6">
+                        <h2 class="text-2xl font-bold">Статьи</h2>
+                        <button id="add-article-btn" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                            <i class="fas fa-plus mr-2"></i>Добавить статью
+                        </button>
+                    </div>
+                    
+                    <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Название</th>
+                                        <th>Автор</th>
+                                        <th>Категория</th>
+                                        <th>Рейтинг</th>
+                                        <th>Статус</th>
+                                        <th>Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="articles-table-body">
+                                    <!-- Articles will be loaded here -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Settings Section -->
+                <div id="settings-section" class="content-section">
+                    <h2 class="text-2xl font-bold mb-6">Настройки</h2>
+                    <div class="bg-white rounded-xl shadow-md p-6">
+                        <div class="space-y-6">
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Основные настройки</h3>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Название сайта</label>
+                                        <input type="text" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="Rank AI">
+                                    </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Email администратора</label>
+                                        <input type="email" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" value="admin@rankai.ru">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div>
+                                <h3 class="text-lg font-semibold mb-4">Настройки безопасности</h3>
+                                <div class="space-y-4">
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="two-factor" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded">
+                                        <label for="two-factor" class="ml-2 block text-sm text-gray-700">Двухфакторная аутентификация</label>
+                                    </div>
+                                    <div class="flex items-center">
+                                        <input type="checkbox" id="log-actions" class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" checked>
+                                        <label for="log-actions" class="ml-2 block text-sm text-gray-700">Логирование действий администратора</label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="pt-4 border-t border-gray-200">
+                                <button class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
+                                    Сохранить настройки
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add User Modal -->
+    <div id="add-user-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Добавить пользователя</h2>
+            <form id="add-user-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
+                    <input type="text" name="first_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
+                    <input type="text" name="last_name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                    <input type="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Пароль</label>
+                    <input type="password" name="password" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Роль</label>
+                    <select name="role" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="user">Пользователь</option>
+                        <option value="admin">Администратор</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="close-modal px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Отмена
+                    </button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Добавить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add Article Modal -->
+    <div id="add-article-modal" class="modal">
+        <div class="modal-content">
+            <h2 class="text-xl font-bold mb-4">Добавить статью</h2>
+            <form id="add-article-form" class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Название</label>
+                    <input type="text" name="title" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Автор</label>
+                    <input type="text" name="author" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Категория</label>
+                    <select name="category" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500">
+                        <option value="physics">Физика</option>
+                        <option value="biology">Биология</option>
+                        <option value="chemistry">Химия</option>
+                        <option value="cs">Информатика</option>
+                        <option value="economics">Экономика</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Аннотация</label>
+                    <textarea name="abstract" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32"></textarea>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">Файл статьи (PDF)</label>
+                    <input type="file" name="file" accept=".pdf" required class="w-full">
+                </div>
+                <div class="flex justify-end space-x-3">
+                    <button type="button" class="close-modal px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50">
+                        Отмена
+                    </button>
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">
+                        Добавить
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check admin authentication
+            const token = localStorage.getItem('access_token');
+            if (!token) {
+                window.location.href = '/index.html';
+                return;
+            }
+
+            // Verify admin role
+            async function checkAdminRole() {
+                try {
+                    console.log('Checking admin role...');
+                    const response = await fetch('/api/users/me', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) {
+                        console.error('Response not OK:', response.status);
+                        throw new Error('Unauthorized');
+                    }
+                    
+                    const userData = await response.json();
+                    console.log('User data from server:', userData);
+                    console.log('User role:', userData.role);
+                    console.log('User type:', userData.type);
+                    
+                    if (userData.role !== 'admin') {
+                        console.log('Access denied: user role is not admin');
+                        throw new Error('Access denied');
+                    }
+                    console.log('Admin access granted');
+                } catch (error) {
+                    console.error('Error in checkAdminRole:', error);
+                    window.location.href = '/index.html';
+                }
+            }
+
+            checkAdminRole();
+
+            // Navigation
+            const sidebarItems = document.querySelectorAll('.sidebar-item');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            sidebarItems.forEach(item => {
+                if (item.id === 'logout-btn') return;
+                
+                item.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    
+                    // Remove active class from all items
+                    sidebarItems.forEach(si => si.classList.remove('active'));
+                    
+                    // Add active class to clicked item
+                    item.classList.add('active');
+                    
+                    // Hide all sections
+                    contentSections.forEach(section => {
+                        section.classList.remove('active');
+                    });
+                    
+                    // Show selected section
+                    const sectionId = item.getAttribute('data-section') + '-section';
+                    document.getElementById(sectionId).classList.add('active');
+                });
+            });
+
+            // Logout
+            document.getElementById('logout-btn').addEventListener('click', (e) => {
+                e.preventDefault();
+                localStorage.removeItem('access_token');
+                localStorage.removeItem('user_id');
+                window.location.href = '/index.html';
+            });
+
+            // Modal functionality
+            const modals = document.querySelectorAll('.modal');
+            const addUserBtn = document.getElementById('add-user-btn');
+            const addArticleBtn = document.getElementById('add-article-btn');
+            const closeButtons = document.querySelectorAll('.close-modal');
+
+            function openModal(modalId) {
+                document.getElementById(modalId).classList.add('active');
+            }
+
+            function closeModal(modalId) {
+                document.getElementById(modalId).classList.remove('active');
+            }
+
+            addUserBtn.addEventListener('click', () => openModal('add-user-modal'));
+            addArticleBtn.addEventListener('click', () => openModal('add-article-modal'));
+
+            closeButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    button.closest('.modal').classList.remove('active');
+                });
+            });
+
+            modals.forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.classList.remove('active');
+                    }
+                });
+            });
+
+            // Load dashboard data
+            async function loadDashboardData() {
+                try {
+                    const response = await fetch('/api/admin/dashboard', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to load dashboard data');
+                    
+                    const data = await response.json();
+                    
+                    document.getElementById('total-users').textContent = data.total_users;
+                    document.getElementById('total-articles').textContent = data.total_articles;
+                    document.getElementById('new-users').textContent = data.new_users;
+                    document.getElementById('active-sessions').textContent = data.active_sessions;
+                } catch (error) {
+                    console.error('Error loading dashboard data:', error);
+                }
+            }
+
+            // Load users data
+            async function loadUsers() {
+                try {
+                    const response = await fetch('/api/admin/users', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to load users');
+                    
+                    const users = await response.json();
+                    const tbody = document.getElementById('users-table-body');
+                    tbody.innerHTML = '';
+                    
+                    users.forEach(user => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="text-gray-600">${user.id}</td>
+                            <td>${user.first_name} ${user.last_name}</td>
+                            <td>${user.email}</td>
+                            <td>
+                                <span class="px-2 py-1 rounded-full text-xs ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}">
+                                    ${user.role}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="px-2 py-1 rounded-full text-xs ${user.status === 'active' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                                    ${user.status}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800" onclick="editUser(${user.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="deleteUser(${user.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } catch (error) {
+                    console.error('Error loading users:', error);
+                }
+            }
+
+            // Load articles data
+            async function loadArticles() {
+                try {
+                    const response = await fetch('/api/admin/articles', {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to load articles');
+                    
+                    const articles = await response.json();
+                    const tbody = document.getElementById('articles-table-body');
+                    tbody.innerHTML = '';
+                    
+                    articles.forEach(article => {
+                        const tr = document.createElement('tr');
+                        tr.innerHTML = `
+                            <td class="text-gray-600">${article.id}</td>
+                            <td>${article.title}</td>
+                            <td>${article.author}</td>
+                            <td>
+                                <span class="px-2 py-1 rounded-full text-xs bg-blue-100 text-blue-800">
+                                    ${article.category}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="font-medium ${article.rating >= 8 ? 'text-green-600' : 'text-gray-600'}">
+                                    ${article.rating.toFixed(1)}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="px-2 py-1 rounded-full text-xs ${article.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
+                                    ${article.status}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="flex space-x-2">
+                                    <button class="text-blue-600 hover:text-blue-800" onclick="editArticle(${article.id})">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="deleteArticle(${article.id})">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        `;
+                        tbody.appendChild(tr);
+                    });
+                } catch (error) {
+                    console.error('Error loading articles:', error);
+                }
+            }
+
+            // Add user form submission
+            document.getElementById('add-user-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                const userData = {
+                    first_name: formData.get('first_name'),
+                    last_name: formData.get('last_name'),
+                    email: formData.get('email'),
+                    password: formData.get('password'),
+                    role: formData.get('role')
+                };
+                
+                try {
+                    const response = await fetch('/api/admin/users', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify(userData)
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to add user');
+                    
+                    closeModal('add-user-modal');
+                    loadUsers();
+                    e.target.reset();
+                } catch (error) {
+                    console.error('Error adding user:', error);
+                    alert('Ошибка при добавлении пользователя');
+                }
+            });
+
+            // Add article form submission
+            document.getElementById('add-article-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const formData = new FormData(e.target);
+                
+                try {
+                    const response = await fetch('/api/admin/articles', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: formData
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to add article');
+                    
+                    closeModal('add-article-modal');
+                    loadArticles();
+                    e.target.reset();
+                } catch (error) {
+                    console.error('Error adding article:', error);
+                    alert('Ошибка при добавлении статьи');
+                }
+            });
+
+            // Delete user function
+            window.deleteUser = async (userId) => {
+                if (!confirm('Вы уверены, что хотите удалить этого пользователя?')) return;
+                
+                try {
+                    const response = await fetch(`/api/admin/users/${userId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to delete user');
+                    
+                    loadUsers();
+                } catch (error) {
+                    console.error('Error deleting user:', error);
+                    alert('Ошибка при удалении пользователя');
+                }
+            };
+
+            // Delete article function
+            window.deleteArticle = async (articleId) => {
+                if (!confirm('Вы уверены, что хотите удалить эту статью?')) return;
+                
+                try {
+                    const response = await fetch(`/api/admin/articles/${articleId}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (!response.ok) throw new Error('Failed to delete article');
+                    
+                    loadArticles();
+                } catch (error) {
+                    console.error('Error deleting article:', error);
+                    alert('Ошибка при удалении статьи');
+                }
+            };
+
+            // Initial data load
+            loadDashboardData();
+            loadUsers();
+            loadArticles();
+        });
+    </script>
+</body>
+</html>
