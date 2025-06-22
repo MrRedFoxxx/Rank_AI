@@ -647,7 +647,7 @@ async def admin_get_users(
                 "id": user[0],
                 "first_name": user[1],  # name
                 "last_name": user[2],   # surname
-                "email": user[3],       # login используется как email
+                "login": user[3],       # login
                 "role": user[6] if len(user) > 6 and user[6] else "user",  # type/role
                 "status": "active"
             }
@@ -698,11 +698,11 @@ async def admin_create_user(
         hashed_password = get_password_hash(user_data["password"])
         new_user = await database.create_user(
             db,
-            email=user_data["email"],
+            login=user_data["login"],
             password=hashed_password,
-            name=user_data["name"],
-            surname=user_data["surname"],
-            type=user_data.get("type", "user")
+            name=user_data["first_name"],
+            surname=user_data["last_name"],
+            type=user_data.get("role", "user")
         )
         return new_user
     except Exception as e:
