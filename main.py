@@ -645,10 +645,10 @@ async def admin_get_users(
         return [
             {
                 "id": user[0],
-                "name": user[1],
-                "surname": user[2],
-                "email": user[3],
-                "type": user[9] if len(user) > 9 else "user",
+                "first_name": user[1],  # name
+                "last_name": user[2],   # surname
+                "email": user[3],       # login используется как email
+                "role": user[6] if len(user) > 6 and user[6] else "user",  # type/role
                 "status": "active"
             }
             for user in users
