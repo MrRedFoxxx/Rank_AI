@@ -676,8 +676,8 @@ async def admin_get_articles(
                 "id": article[0],
                 "title": article[1],
                 "author": f"{article[11]} {article[12]}" if article[11] and article[12] else "Unknown",
-                "category": article[8],
-                "rating": float(article[6]) if article[6] is not None else 0.0,
+                "category": article[10],  # Исправлено: category находится на индексе 10
+                "rating": float(article[5]) if article[5] is not None else 0.0,  # Исправлено: rating на индексе 5
                 "status": "published"
             }
             for article in articles
@@ -751,8 +751,8 @@ async def admin_delete_article(
             detail=str(e)
         )
 
-@app.post("/api/articles")
-async def create_article(
+@app.post("/api/admin/articles")
+async def admin_create_article(
     title: str = Form(...),
     abstract: str = Form(...),
     authors: str = Form(...),
@@ -761,7 +761,7 @@ async def create_article(
     file: UploadFile = File(...),
     preview_url: str = Form(None),
     db: AsyncSession = Depends(database.get_db),
-    current_user: dict = Depends(get_current_user)
+    admin: dict = Depends(check_admin_access)
 ):
     try:
         # Сначала создаем запись в БД, чтобы получить ID
@@ -781,7 +781,7 @@ async def create_article(
                 "keywords": keywords,
                 "rating": 0.0,
                 "file_path": "temp",  # Временный путь
-                "user_id": current_user["id"],
+                "user_id": admin["id"],  # Используем ID администратора
                 "date": datetime.now().strftime("%Y-%m-%d"),
                 "authors": authors,
                 "category": category
@@ -1110,6 +1110,68 @@ async def ai_search_articles(
     except Exception as e:
         print(f"Ошибка ИИ-поиска: {str(e)}")
         return []
+
+@app.post("/api/articles")
+async def create_article(
+    title: str = Form(...),
+    abstract: str = Form(...),
+    authors: str = Form(...),
+    keywords: str = Form(...),
+    category: str = Form(...),
+    file: UploadFile = File(...),
+    preview_url: str = Form(None),
+    db: AsyncSession = Depends(database.get_db),
+    current_user: dict = Depends(get_current_user)
+):
+    try:
+        # Сначала создаем запись в БД, чтобы получить ID
+        query = text("""
+            INSERT INTO articles (title, preview_image, abstract, keywords, rating, file_path, user_id, date, authors, category)
+            VALUES (:title, :preview_image, :abstract, :keywords, :rating, :file_path, :user_id, :date, :authors, :category)
+            RETURNING id
+        """)
+        
+        # Выполняем запрос с временным путем к файлу
+        result = await db.execute(
+            query,
+            {
+                "title": title,
+                "preview_image": preview_url,
+                "abstract": abstract,
+                "keywords": keywords,
+                "rating": 0.0,
+                "file_path": "temp",  # Временный путь
+                "user_id": current_user["id"],
+                "date": datetime.now().strftime("%Y-%m-%d"),
+                "authors": authors,
+                "category": category
+            }
+        )
+        
+        await db.commit()
+        article_id = result.scalar()
+        
+        # Сохраняем файл с ID статьи в качестве имени
+        file_path = f"articles/{article_id}.pdf"
+        full_path = os.path.join("static", file_path)
+        
+        with open(full_path, "wb") as f:
+            content = await file.read()
+            f.write(content)
+        
+        # Обновляем путь к файлу в БД
+        await db.execute(
+            text("UPDATE articles SET file_path = :file_path WHERE id = :id"),
+            {"file_path": file_path, "id": article_id}
+        )
+        await db.commit()
+        
+        return {"id": article_id, "message": "Статья успешно создана"}
+        
+    except Exception as e:
+        await db.rollback()
+        print(f"Ошибка при создании статьи: {str(e)}")
+        raise HTTPException(status_code=500, detail="Ошибка при создании статьи")
 
 if __name__ == "__main__":
     import uvicorn
